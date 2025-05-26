@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/rlmaster"
+        android:orientation="vertical"
+        android:layout_marginBottom="4dp"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Product Stock"
+            android:textSize="20sp"
+            android:textColor="@color/main"
+            android:fontFamily="@font/lato"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/main"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_stock"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:clipToPadding="false"
+            android:scrollbars="none"
+
+            />
+
+
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/rlmaster"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+
+        >
+
+       <!-- <TextView
+            android:id="@+id/cancelTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:clickable="true"
+            android:text="Cancel"
+            android:textColor="@color/pBlue"
+            android:textSize="18dp" />-->
+
+        <TextView
+            android:id="@+id/closeTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:clickable="true"
+            style="?attr/selectableItemBackground"
+            android:text="Close"
+            android:textColor="@color/pBlue"
+            android:textSize="20sp"
+            android:padding="6dp"
+            android:background="@color/shadow_gen"
+            android:focusable="true" />
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

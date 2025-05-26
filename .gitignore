@@ -1,0 +1,16 @@
+.gradle/
+build/
+*/build/
+local.properties
+*.jks
+.idea/
+*.iml
+*.log
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+obj/
+*.apk
+*.ap_
+captures/

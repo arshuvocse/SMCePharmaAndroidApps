@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/masterLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-1sp"
+        android:orientation="horizontal"
+        android:weightSum="5.5">
+
+        <TextView
+            android:id="@+id/dateTxt"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:background="@drawable/border_around"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/lato_bold"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textColor="@color/deepBlue"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/nameTxt"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border_around"
+            android:fontFamily="@font/lato_bold"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textColor="@color/deepBlue"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/daTxt"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".8"
+            android:background="@drawable/border_around"
+            android:fontFamily="@font/lato_bold"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textColor="@color/deepBlue"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/marketTxt"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border_around"
+            android:fontFamily="@font/lato_bold"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textColor="@color/deepBlue"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/TotalEmpRsltTxt"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border_around"
+            android:fontFamily="@font/lato_bold"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textColor="@color/deepBlue"
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.2"
+            android:background="@drawable/border_around"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/statusTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_bold"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textColor="@color/deepBlue"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_approve"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:visibility="gone"
+                android:background="@drawable/shape_approved"
+                android:fontFamily="@font/lato_bold"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="Approve"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

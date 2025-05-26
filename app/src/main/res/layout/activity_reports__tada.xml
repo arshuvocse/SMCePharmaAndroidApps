@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity.SelfReports.Reports_TadaActivity"
+    android:orientation="vertical">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_custom"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/main"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:theme="@style/ToolbarTheme"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/daily_allowance_report"
+                android:id="@+id/toolbar_title"
+                android:textSize="18sp"
+                android:fontFamily="@font/lato"
+                android:textColor="@android:color/white"
+                android:layout_alignParentStart="true" />
+            <ImageView
+                android:id="@+id/atteFilter"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_filter_white"
+                android:layout_marginEnd="20dp"
+                />
+
+        </RelativeLayout>
+
+
+
+
+    </androidx.appcompat.widget.Toolbar>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#f7f7f7f7"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10sp"
+
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/selectedMonthTxt"
+                android:gravity="center"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:elevation="10sp"
+                />
+
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="2sp"
+        android:layout_marginRight="2sp"
+        android:paddingTop="20sp"
+        android:paddingBottom="20sp"
+        android:background="@color/white"
+        >
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/daily_allowance_list"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/main"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4.5"
+            android:layout_marginTop="3sp"
+            >
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".5"
+                android:text="@string/date"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:background="@drawable/border_around"
+                android:padding="3sp"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Name"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:background="@drawable/border_around"
+                android:padding="3sp"
+                />
+
+           <!-- <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="TA"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:background="@drawable/border_around"
+                android:padding="3sp"
+                />-->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="DA"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:background="@drawable/border_around"
+                android:layout_marginLeft="-1dp"
+                android:padding="3dp"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Market"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:background="@drawable/border_around"
+                android:layout_marginLeft="-1dp"
+                android:padding="3sp"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/status"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:background="@drawable/border_around"
+                android:layout_marginLeft="-1dp"
+                android:padding="3dp"
+                />
+
+        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:clipToPadding="false"
+            android:paddingBottom="10dp"
+            />
+
+
+    </LinearLayout>
+</LinearLayout>

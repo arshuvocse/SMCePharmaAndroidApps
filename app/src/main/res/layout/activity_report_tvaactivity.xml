@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity.SelfReports.ReportTVAActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_custom"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/main"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:theme="@style/ToolbarTheme">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+
+                android:fontFamily="@font/lato"
+                android:text="Target vs Achievement"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- <include
+         android:id="@+id/filter_month_year_layout"
+         android:layout_height="0dp"
+         android:layout_width="match_parent"
+         layout="@layout/filter_month_year_layout"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/toolbar_custom" />-->
+    <!-- <LinearLayout android:id="@+id/filter_month_year_layout"
+
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:orientation="horizontal"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/toolbar_custom">
+
+
+     </LinearLayout>-->
+    <LinearLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_custom">
+
+        <TextView
+            android:id="@+id/txtFromDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/latoregular"
+            android:gravity="end"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:fontFamily="@font/lato_bold"
+            android:gravity="center"
+            android:text="To"
+            android:textColor="@color/pBlue"
+            android:textSize="18sp"
+
+            />
+
+        <TextView
+            android:id="@+id/txtToDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/latoregular"
+            android:gravity="start"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+        <!--  <androidx.cardview.widget.CardView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:elevation="4dp"
+              android:layout_marginTop="2dp">
+
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="4dp"
+                  android:layout_marginEnd="4dp"
+                  android:background="@drawable/main_custom_border2"
+                  android:orientation="horizontal"
+                  android:padding="10dp"
+                  android:weightSum="4"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toTopOf="parent">
+
+                  <TextView
+                      android:layout_width="0dp"
+                      android:layout_height="match_parent"
+                      android:layout_weight="1"
+                      android:gravity="center|start"
+                      android:fontFamily="@font/latoregular"
+                      android:text="From Date"
+                      android:textColor="@color/black"
+                      android:textSize="14sp"
+
+
+                      />
+
+                  <TextView
+                      android:id="@+id/txtFromDate"
+                      android:layout_width="0dp"
+                      android:layout_height="match_parent"
+                      android:layout_weight="2"
+                      android:fontFamily="@font/latoregular"
+                      android:gravity="center"
+                      android:paddingLeft="5dp"
+                      android:textColor="@color/pBlue"
+                      android:textSize="16sp"
+
+                      />
+
+                  <ImageView
+                      android:id="@+id/iv_datePickerFromDate"
+                      android:layout_width="0dp"
+                      android:layout_height="match_parent"
+                      android:layout_weight="1"
+                      android:src="@drawable/ic_calendar"
+                      app:tint="@color/main" />
+
+
+              </LinearLayout>
+          </androidx.cardview.widget.CardView>
+
+          <androidx.cardview.widget.CardView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:elevation="4dp"
+              android:layout_marginTop="4dp">
+
+              <LinearLayout
+                  android:id="@+id/linearLayout"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="4dp"
+                  android:layout_marginEnd="4dp"
+                  android:background="@drawable/main_custom_border2"
+                  android:orientation="horizontal"
+                  android:padding="10dp"
+                  android:weightSum="4"
+                  app:layout_constraintTop_toBottomOf="@+id/ddDiv"
+                  tools:layout_editor_absoluteX="10dp">
+
+                  <TextView
+                      android:layout_width="0dp"
+                      android:layout_height="match_parent"
+                      android:layout_weight="1"
+                      android:gravity="center|start"
+                      android:fontFamily="@font/latoregular"
+                      android:text="To Date"
+                      android:textColor="@color/black"
+                      android:textSize="14sp"
+
+
+                      />
+
+                  <TextView
+                      android:id="@+id/txtToDate"
+                      android:layout_width="0dp"
+                      android:layout_height="match_parent"
+                      android:layout_weight="2"
+                      android:fontFamily="@font/latoregular"
+                      android:gravity="center"
+                      android:textColor="@color/pBlue"
+                      android:textSize="16sp"
+                      />
+
+                  <ImageView
+                      android:id="@+id/iv_datePickerToDate"
+                      android:layout_width="0dp"
+                      android:layout_height="match_parent"
+                      android:layout_weight="1"
+                      android:src="@drawable/ic_calendar"
+                      app:tint="@color/main"
+
+
+                      />
+
+
+              </LinearLayout>
+          </androidx.cardview.widget.CardView>-->
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:weightSum="8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.3"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="T.Code/Name"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="-1dp"
+            android:layout_weight="1.1"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="Target"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="-1dp"
+            android:layout_weight="1.1"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="Order"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="-1dp"
+            android:layout_weight=".8"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="Ach%"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="-1dp"
+            android:layout_weight="1"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="Invoice"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="-1dp"
+            android:layout_weight=".8"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="Ach%"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="-1dp"
+            android:layout_weight="1.1"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="Sales"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="-1dp"
+            android:layout_weight=".8"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="Ach%"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_report"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout11"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout10" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout11"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:orientation="horizontal"
+        android:weightSum="8"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/tname"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.3"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3dp"
+            android:text="Total"
+            android:textColor="@color/black"
+            android:backgroundTint="@color/third"/>
+
+        <TextView
+            android:id="@+id/target"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-1dp"
+            android:layout_weight="1.1"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="0.00"
+            android:textColor="@color/black"
+
+            />
+
+        <TextView
+            android:id="@+id/order"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-1dp"
+            android:layout_weight="1.1"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="0.00"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/orderAch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-1dp"
+            android:layout_weight=".8"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="0%"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/invoice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-1dp"
+            android:layout_weight="1"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="0.00"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/invAch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-1dp"
+            android:layout_weight=".8"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="0%"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/sales"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-1dp"
+            android:layout_weight="1.1"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="0.00"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/salesAch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-1dp"
+            android:layout_weight=".8"
+            android:background="@drawable/border_around"
+            android:gravity="center"
+            android:padding="3sp"
+            android:text="0%"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

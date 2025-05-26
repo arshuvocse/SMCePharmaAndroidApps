@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/masterLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity.Attendance.AttendanceActivity">
+    <LinearLayout
+        android:id="@+id/toll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:elevation="4dp"
+        android:orientation="horizontal"
+        android:weightSum="3"
+
+        >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_custom"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/main"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:theme="@style/ToolbarTheme"
+
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginEnd="30dp"
+                    android:gravity="center|start"
+                    android:layout_toStartOf="@+id/attRefresh"
+                    android:fontFamily="@font/lato_bold"
+                    android:text="@string/daily_attendance"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:id="@+id/attRefresh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:paddingEnd="10dp"
+                    android:src="@android:drawable/ic_popup_sync" />
+            </RelativeLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toll"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:weightSum="8">
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5" />
+        <LinearLayout
+            android:id="@+id/punchInDIv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="-5dp"
+            android:layout_weight="3"
+            android:background="@drawable/top_round_corner"
+            android:elevation="10dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:visibility="invisible">
+
+            <TextView
+                android:id="@+id/punchInDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/latoregular"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+
+                />
+
+            <TextView
+                android:id="@+id/punchInTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/latoregular"
+                android:textColor="@color/main"
+                android:textSize="25sp"
+
+                />
+
+
+            <Button
+                android:id="@+id/btnPunchIn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/main"
+                android:drawableStart="@android:drawable/ic_menu_send"
+                android:paddingLeft="25dp"
+                android:paddingTop="10dp"
+                android:paddingRight="25dp"
+                android:paddingBottom="10dp"
+                android:text="@string/punch_in"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/punchOutDiv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="-5dp"
+            android:layout_weight="3"
+            android:background="@drawable/top_round_corner"
+            android:elevation="10dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:visibility="invisible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/punchOutDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/latoregular"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+
+                    />
+
+                <TextView
+                    android:id="@+id/punchOutTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/lato"
+                    android:gravity="center"
+                    android:textColor="@color/main"
+                    android:textSize="20sp"
+
+                    />
+
+
+            </LinearLayout>
+
+
+            <EditText
+                android:id="@+id/edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/enter_remarks_here"
+                android:inputType="textPersonName|textCapWords"
+                android:autofillHints="" />
+
+
+            <Button
+                android:id="@+id/btnPunchOut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/main"
+                android:drawableStart="@android:drawable/ic_menu_send"
+                android:paddingLeft="25dp"
+                android:paddingTop="10dp"
+                android:paddingRight="25dp"
+                android:paddingBottom="10dp"
+                android:text="@string/punch_out"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/divAttCompleted"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="-5dp"
+            android:layout_weight="3"
+            android:background="@drawable/top_round_corner"
+            android:elevation="10dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:visibility="invisible">
+
+            <TextView
+                android:id="@+id/dTXT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/third"
+                android:textSize="25sp"
+               android:fontFamily="@font/lato"
+
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/your_attendance_is_completed"
+                android:textColor="@color/third"
+                android:textSize="20sp"
+            android:fontFamily="@font/lato"
+
+
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

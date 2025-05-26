@@ -1,0 +1,25 @@
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=BC:6E:94:C4:6E:9E:81:6A:FE:C8:8A:65:B5:FC:B6:7F:AA:F7:28:8B%3Bcom.creatrix.salessolution.Activity.Map
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    com.creatrix.salessolution.Activity.Map
+
+    SHA-1 certificate fingerprint:
+    BC:6E:94:C4:6E:9E:81:6A:FE:C8:8A:65:B5:FC:B6:7F:AA:F7:28:8B
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+   <!-- <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCY9fuZXg-VJI81cINLdwPR_O0pxLgBgZc</string>-->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAW0LCVuj4qitEj3ik0_QEPT5WzFfCYtoU</string>
+</resources>

@@ -1,0 +1,15 @@
+<vector android:height="30dp" android:viewportHeight="512"
+    android:viewportWidth="512" android:width="30dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#57a4ff" android:pathData="m96,160v208h40v48l48,-48h232v-208zM272,328h-32v-32h32zM272,272h-32v-64h32z"/>
+    <path android:fillColor="#57a4ff" android:pathData="m496,84v28h-480v-28a19.994,19.994 0,0 1,20 -20h440a19.994,19.994 0,0 1,20 20z"/>
+    <path android:fillColor="#57a4ff" android:pathData="m96,160v208h40v48l48,-48h232v-208zM272,328h-32v-32h32zM272,272h-32v-64h32z"/>
+    <path android:fillColor="#004fac" android:pathData="m476,56h-440a28.031,28.031 0,0 0,-28 28v344a28.031,28.031 0,0 0,28 28h440a28.031,28.031 0,0 0,28 -28v-344a28.031,28.031 0,0 0,-28 -28zM488,428a12.01,12.01 0,0 1,-12 12h-440a12.01,12.01 0,0 1,-12 -12v-308h464zM488,104h-464v-20a12.01,12.01 0,0 1,12 -12h440a12.01,12.01 0,0 1,12 12z"/>
+    <path android:fillColor="#004fac" android:pathData="m40,96h8a8,8 0,0 0,0 -16h-8a8,8 0,0 0,0 16z"/>
+    <path android:fillColor="#004fac" android:pathData="m72,96h8a8,8 0,0 0,0 -16h-8a8,8 0,0 0,0 16z"/>
+    <path android:fillColor="#004fac" android:pathData="m104,96h8a8,8 0,0 0,0 -16h-8a8,8 0,0 0,0 16z"/>
+    <path android:fillColor="#004fac" android:pathData="m440,416h-48a8,8 0,0 0,0 16h48a8,8 0,0 0,0 -16z"/>
+    <path android:fillColor="#004fac" android:pathData="m472,416h-8a8,8 0,0 0,0 16h8a8,8 0,0 0,0 -16z"/>
+    <path android:fillColor="#004fac" android:pathData="m416,152h-320a8,8 0,0 0,-8 8v208a8,8 0,0 0,8 8h32v40a8,8 0,0 0,13.66 5.66l45.65,-45.66h228.69a8,8 0,0 0,8 -8v-208a8,8 0,0 0,-8 -8zM408,360h-224a8.008,8.008 0,0 0,-5.66 2.34l-34.34,34.35v-28.69a8,8 0,0 0,-8 -8h-32v-192h304z"/>
+    <path android:fillColor="#004fac" android:pathData="m240,336h32a8,8 0,0 0,8 -8v-32a8,8 0,0 0,-8 -8h-32a8,8 0,0 0,-8 8v32a8,8 0,0 0,8 8zM248,304h16v16h-16z"/>
+    <path android:fillColor="#004fac" android:pathData="m240,280h32a8,8 0,0 0,8 -8v-64a8,8 0,0 0,-8 -8h-32a8,8 0,0 0,-8 8v64a8,8 0,0 0,8 8zM248,216h16v48h-16z"/>
+</vector>

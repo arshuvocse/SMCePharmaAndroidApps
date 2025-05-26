@@ -1,0 +1,152 @@
+package com.creatrix.salessolution.Activity.OrderProcess.Model;
+
+import com.creatrix.salessolution.Model.Product;
+
+import java.util.List;
+
+public class OrderMasterModel {
+    int OrderId;
+    int EmpId;
+    String ComUnitId;
+    String CustomerCode;
+    String SubmittedDate;
+    String CollectionDate;
+      String PaymentType ;
+
+    public String getPaymentType() {
+        return PaymentType;
+    }
+
+    public void setPaymentType(String paymentType) {
+        PaymentType = paymentType;
+    }
+
+    String DeliveryDate;
+
+    public String getPaymentDate() {
+        return PaymentDate;
+    }
+
+    public void setPaymentDate(String paymentDate) {
+        PaymentDate = paymentDate;
+    }
+
+    String PaymentDate;
+    String Remarks;
+    String OrderType;
+    Double TpPercentage;
+
+    List<CampaignMaster2> campaignMasters;
+    List<Product> OrderDetails = null;
+
+
+    public int getOrderId() {
+        return OrderId;
+    }
+
+    public void setOrderId(int orderId) {
+        OrderId = orderId;
+    }
+
+    public int getEmpId() {
+        return EmpId;
+    }
+
+    public void setEmpId(int empId) {
+        EmpId = empId;
+    }
+
+    public String getComUnitId() {
+        return ComUnitId;
+    }
+
+    public void setComUnitId(String comUnitId) {
+        ComUnitId = comUnitId;
+    }
+
+    public String getCustomerCode() {
+        return CustomerCode;
+    }
+
+    public void setCustomerCode(String customerCode) {
+        CustomerCode = customerCode;
+    }
+
+    public String getSubmittedDate() {
+        return SubmittedDate;
+    }
+
+    public void setSubmittedDate(String submittedDate) {
+        SubmittedDate = submittedDate;
+    }
+
+    public String getCollectionDate() {
+        return CollectionDate;
+    }
+
+    public void setCollectionDate(String collectionDate) {
+        CollectionDate = collectionDate;
+    }
+
+    public String getDeliveryDate() {
+        return DeliveryDate;
+    }
+
+    public void setDeliveryDate(String deliveryDate) {
+        DeliveryDate = deliveryDate;
+    }
+
+    public String getRemarks() {
+        return Remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        Remarks = remarks;
+    }
+
+    public String getOrderType() {
+        return OrderType;
+    }
+
+    public void setOrderType(String orderType) {
+        OrderType = orderType;
+    }
+
+    public Double getTpPercentage() {
+        return TpPercentage;
+    }
+
+    public void setTpPercentage(Double tpPercentage) {
+        TpPercentage = tpPercentage;
+    }
+
+    public List<CampaignMaster2> getCampaignMasters() {
+        return campaignMasters;
+    }
+
+    public void setCampaignMasters(List<CampaignMaster2> campaignMasters) {
+        this.campaignMasters = campaignMasters;
+    }
+
+    public List<Product> getOrderDetails() {
+        return OrderDetails;
+    }
+
+    public void setOrderDetails(List<Product> orderDetails) {
+        OrderDetails = orderDetails;
+    }
+
+    @Override
+    public String toString() {
+        return "EmpId=" + EmpId +
+                ", ComUnitId='" + ComUnitId + '\'' +
+                ", CustomerCode='" + CustomerCode + '\'' +
+                ", SubmittedDate='" + SubmittedDate + '\'' +
+                ", CollectionDate='" + CollectionDate + '\'' +
+                ", Remarks='" + Remarks + '\'' +
+                ", OrderType='" + OrderType + '\'' +
+                ", TpPercentage=" + TpPercentage +
+                ", campaignMasters=" + campaignMasters +
+                ", OrderDetails=" + OrderDetails;
+    }
+}

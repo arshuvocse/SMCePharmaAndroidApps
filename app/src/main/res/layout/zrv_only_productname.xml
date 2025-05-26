@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="2dp"
+    android:layout_margin="4dp"
+    android:gravity="center"
+    android:id="@+id/master"
+
+    >
+
+        <TextView
+            android:id="@+id/productName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:textColor="@color/black"
+            android:layout_gravity="center_horizontal|center_vertical"
+           />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_minus"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+
+            android:text="@string/common_minus"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/red"/>
+
+        <EditText
+            android:id="@+id/et_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:ems="3"
+            android:maxLength="4"
+            android:focusable="true"
+            android:inputType="number"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_plus"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            style="@style/Widget.AppCompat.Button.Small"
+            android:text="@string/common_plus"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/main"/>
+
+    </LinearLayout>

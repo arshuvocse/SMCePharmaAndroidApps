@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ThemeOverlay_App_MaterialAlertDialog" parent="Theme.MaterialComponents.Dialog">
+<!--        <item name="shapeAppearance">@style/ShapeAppearance.App.SmallComponent</item>-->
+        <item name="android:textAppearance">@font/roboto</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="colorPrimary">@color/main</item>
+       <!-- <item name="android:textColor">@color/black</item>-->
+        <item name="android:textColorPrimary">#f3f3f3</item>
+        <item name="android:fontFamily">@font/robotolight</item>
+
+    </style>
+
+    <style name="tab_text" parent="@android:style/TextAppearance.Widget.TabWidget">
+        <item name="android:fontFamily">@font/robotolight</item>
+    </style>
+    <!--    <style name="Widget.App.Button" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+            <item name="shapeAppearance">@style/ShapeAppearance.App.SmallComponent</item>
+            <item name="android:textAppearance">@style/Roboto.Bold.Small</item>
+            <item name="android:textColor">@color/colorAccent</item>
+            <item name="android:textAllCaps">true</item>
+        </style>-->
+</resources>

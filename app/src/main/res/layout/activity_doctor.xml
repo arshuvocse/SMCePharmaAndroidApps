@@ -1,0 +1,1168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightGrey"
+    android:orientation="vertical"
+    android:id="@+id/master"
+    tools:context=".Activity.Doctor.AddDoctor.DoctorActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_custom"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/main"
+        android:elevation="10dp"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:theme="@style/ToolbarThemeMainColor">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:fontFamily="@font/lato_bold"
+                android:text="@string/add_doctor"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+        </RelativeLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:id="@+id/masterLayoutId"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/main_shadow"
+                android:elevation="6dp"
+                android:orientation="vertical">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/remarksT"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="8dp"
+                    android:elevation="5dp"
+                    android:hint="@string/doctor_name">
+
+                    <EditText
+                        android:id="@+id/docName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:textSize="16sp"
+                        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ ."
+                        android:inputType="textCapCharacters"
+                        tools:ignore="SpeakableTextPresentCheck" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="8dp"
+                    android:elevation="5dp"
+                    android:hint="@string/address">
+
+                    <EditText
+                        android:id="@+id/docAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@color/white"
+                    android:elevation="3dp"
+                    android:orientation="vertical"
+                    android:padding="10sp">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingTop="5dp"
+
+                        >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/designation"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/latoregular"/>
+
+                        <Spinner
+                            android:id="@+id/designationSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:elevation="10sp"
+
+                            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/cell_shape"
+                    android:backgroundTint="@color/white"
+                    android:elevation="5dp"
+                    android:orientation="vertical"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/doctor_type"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular" />
+
+                    <Spinner
+                        android:id="@+id/doctorTypeSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="8dp"
+                        android:elevation="10sp"
+
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@color/white"
+                    android:elevation="3dp"
+                    android:orientation="vertical"
+                    android:padding="10dp"
+
+
+                    >
+
+                    <TextView
+                        android:id="@+id/degreeLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:text="@string/degree"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular"/>
+
+                    <ImageView
+                        android:id="@+id/degreeAdd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:clickable="true"
+                        android:src="@drawable/ic_baseline_add_24"
+                        android:focusable="true" />
+
+                    <TextView
+                        android:id="@+id/degreeListStr"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/degreeLabel"
+                        android:layout_marginTop="5dp"
+                        android:padding="5dp"
+                        android:textColor="@color/black" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@color/white"
+                    android:elevation="3dp"
+                    android:orientation="vertical"
+                    android:padding="10sp"
+
+                    >
+
+                    <TextView
+                        android:id="@+id/specialityLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:text="@string/speciality"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular"
+
+                        />
+
+                    <ImageView
+                        android:id="@+id/specialityAdd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/ic_baseline_add_24" />
+
+                    <TextView
+                        android:id="@+id/specilityListStr"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/specialityLabel"
+                        android:layout_marginTop="5dp"
+                        android:padding="5dp"
+                        android:textColor="@color/black"
+
+                        />
+
+
+                </RelativeLayout>
+
+                <!--  <RelativeLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginLeft="8dp"
+                      android:layout_marginTop="8dp"
+                      android:layout_marginRight="8dp"
+                      android:background="@color/white"
+                      android:elevation="5dp"
+                      android:orientation="vertical"
+                      android:padding="10sp"
+
+                      >
+
+                      <TextView
+                          android:id="@+id/typeLabel"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_alignParentLeft="true"
+                          android:text="Doctor Type"
+                          android:textColor="@color/black"
+
+                          />
+
+                      <ImageView
+
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_alignParentRight="true"
+                          android:src="@drawable/ic_baseline_add_24" />
+
+                      <TextView
+
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:layout_below="@+id/typeLabel"
+                          android:layout_marginTop="5dp"
+                          android:padding="5dp"
+                          android:textColor="@color/black" />
+
+
+                  </RelativeLayout>-->
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@color/white"
+                    android:elevation="5dp"
+                    android:orientation="vertical"
+                    android:padding="10sp"
+
+                    >
+
+                    <TextView
+                        android:id="@+id/institueLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:text="@string/tag_institute"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular"
+                        />
+
+                    <ImageView
+                        android:id="@+id/institueAdd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_baseline_add_24" />
+
+                    <TextView
+                        android:id="@+id/instituteListStr"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/institueLabel"
+                        android:layout_marginTop="5dp"
+                        android:padding="5dp"
+                        android:textColor="@color/black" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@color/white"
+                    android:elevation="3dp"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/brandLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:text="@string/brand"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular"
+                        />
+
+                    <ImageView
+                        android:id="@+id/brandAdd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/ic_baseline_add_24" />
+
+                    <TextView
+                        android:id="@+id/brandListStr"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/brandLabel"
+                        android:layout_marginTop="5dp"
+                        android:padding="5dp"
+                        android:textColor="@color/black" />
+
+                </RelativeLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/main_shadow"
+                android:elevation="6dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/cell_shape"
+                    android:backgroundTint="@color/white"
+                    android:elevation="5dp"
+                    android:orientation="vertical"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+
+                    tools:ignore="RtlSymmetry">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/tag_doctor_category"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular" />
+
+                    <Spinner
+                        android:id="@+id/doctorCategorySpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="8dp"
+                        android:elevation="10dp"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@color/white"
+                    android:elevation="5dp"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                   >
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_contact"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/chamber">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/chamberSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:completionThreshold="1"
+                            android:singleLine="true"
+                            android:padding="10dp"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:id="@+id/rv_chamberlist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+                    <!--<LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        >
+
+                      &lt;!&ndash;  <TextView
+                            android:id="@+id/chamberTypeLabel"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Chamber "
+                            android:textColor="@color/black" />&ndash;&gt;
+
+                       &lt;!&ndash; <Spinner
+                            android:id="@+id/chamberSpinner"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2" />&ndash;&gt;
+
+
+                    </LinearLayout>-->
+
+
+
+                  <!--  <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/chamberDD"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Chamber Address">
+
+                        <EditText
+                            android:id="@+id/chamberAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+-->
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@color/white"
+                    android:elevation="3dp"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
+                      <!--  <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/contact_type"
+                            android:textColor="@color/black" />-->
+
+                       <!-- <Spinner
+                            android:id="@+id/contactTypeSpinner"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2" />-->
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/contact_type">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/contactTypeSpinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:completionThreshold="1"
+                                android:singleLine="true"
+                                android:padding="10dp"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:id="@+id/rv_contactlist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/cell_shape"
+                    android:backgroundTint="@color/white"
+                    android:elevation="5dp"
+                    android:orientation="vertical"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/program_type"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular" />
+
+                    <Spinner
+                        android:id="@+id/programTypeSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="8dp"
+                        android:elevation="10sp"
+
+                        />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/cell_shape"
+                    android:backgroundTint="@color/white"
+                    android:elevation="5dp"
+                    android:orientation="vertical"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/smc_type"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular" />
+
+                    <Spinner
+                        android:id="@+id/smcTypeSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="8dp"
+                        android:elevation="10sp"
+
+                        />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@color/white"
+                    android:elevation="3dp"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                   <!-- <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Special Day"
+                            android:textColor="@color/black" />
+
+                        <Spinner
+                            android:id="@+id/spcialdayTypeSpinner"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2" />
+                    </LinearLayout>-->
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/tag_special_day">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/spcialdayTypeSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:completionThreshold="1"
+                            android:singleLine="true"
+                            android:padding="10dp"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:id="@+id/rv_specialdaylist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:itemCount="2"
+                        />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5sp"
+                        android:background="@color/white"
+                        android:elevation="6dp"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        android:orientation="horizontal"
+                        android:padding="8dp"
+                        >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/tag_date"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/latoregular"/>
+
+                        <TextView
+                            android:id="@+id/scecialdateTxt"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/dash"
+                            android:gravity="center"
+                            android:layout_marginStart="4dp"
+                            android:textColor="@color/main" />
+
+                        <ImageView
+                            android:id="@+id/datePickerDocDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_calendar"
+
+
+                            />
+
+                    </LinearLayout>
+
+                 <!--   <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Special Day">
+
+                        <EditText
+                            android:id="@+id/scecialdateTxt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+-->
+
+                </LinearLayout>
+                <!--  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginLeft="8dp"
+                      android:layout_marginTop="8dp"
+                      android:layout_marginRight="8dp"
+                      android:layout_marginBottom="8dp"
+                      android:background="@drawable/cell_shape"
+                      android:orientation="vertical"
+                      android:paddingLeft="10dp"
+                      android:paddingTop="5dp"
+                      android:elevation="5dp"
+                      android:backgroundTint="@color/white"
+
+                      >
+
+                      <TextView
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_weight="1"
+                          android:text="Customer Station Type"
+                          android:textColor="@color/black"
+                          android:textSize="12sp" />
+
+                      <Spinner
+                          android:id="@+id/custStationTypeSpinner"
+                          android:layout_width="match_parent"
+                          android:layout_marginEnd="8dp"
+                          android:layout_height="30dp"
+                          android:elevation="10sp"
+
+                          />
+
+
+                  </LinearLayout>-->
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@color/main_shadow"
+                android:elevation="3dp"
+                android:orientation="vertical"
+
+                >
+
+                <LinearLayout
+                    android:id="@+id/regiondiv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/cell_shape"
+                    android:backgroundTint="@color/white"
+                    android:elevation="5dp"
+                    android:orientation="vertical"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    tools:ignore="RtlSymmetry">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/tag_zone"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular" />
+
+                    <Spinner
+                        android:id="@+id/regionSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:elevation="10sp"
+
+                        />
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/areadiv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/cell_shape"
+                    android:backgroundTint="@color/white"
+                    android:elevation="5dp"
+                    android:orientation="vertical"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    tools:ignore="RtlSymmetry">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/tag_area"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular" />
+
+                    <Spinner
+                        android:id="@+id/areaSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:elevation="10sp"
+
+                        />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/teridiv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/cell_shape"
+                    android:backgroundTint="@color/white"
+                    android:elevation="5dp"
+                    android:orientation="vertical"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    tools:ignore="RtlSymmetry">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/tag_territory"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular" />
+
+                    <Spinner
+                        android:id="@+id/territorySpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:elevation="10sp"
+
+                        />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/cell_shape"
+                    android:backgroundTint="@color/white"
+                    android:elevation="5dp"
+                    android:orientation="vertical"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    tools:ignore="RtlSymmetry">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/subterritory"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular" />
+
+                    <Spinner
+                        android:id="@+id/sterritorySpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:elevation="10dp"
+
+                        />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/cell_shape"
+                    android:backgroundTint="@color/white"
+                    android:elevation="5dp"
+                    android:orientation="vertical"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/market"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular" />
+
+                    <Spinner
+                        android:id="@+id/marketSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:elevation="10dp"
+
+                        />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/cell_shape"
+                    android:elevation="5dp"
+                    android:orientation="vertical"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    android:visibility="gone"
+
+                    tools:ignore="RtlSymmetry">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/tag_sub_market"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/latoregular" />
+
+                    <Spinner
+                        android:id="@+id/subMarketSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:elevation="10dp"
+
+                        />
+
+
+                </LinearLayout>
+
+                <!--  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginLeft="8dp"
+                      android:layout_marginTop="8dp"
+                      android:layout_marginRight="8dp"
+                      android:background="@drawable/cell_shape"
+                      android:orientation="vertical"
+                      android:paddingLeft="10dp"
+                      android:paddingTop="5dp"
+                      android:elevation="5dp"
+                      android:backgroundTint="@color/white"
+                      >
+
+                      <TextView
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_weight="1"
+                          android:text="Division"
+                          android:textColor="@color/black"
+                          android:textSize="12sp" />
+
+                      <Spinner
+                          android:id="@+id/divisionSpinner"
+                          android:layout_width="match_parent"
+                          android:layout_height="30dp"
+                          android:elevation="10sp"
+
+                          />
+
+
+                  </LinearLayout>
+
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginLeft="8dp"
+                      android:layout_marginTop="8dp"
+                      android:layout_marginRight="8dp"
+                      android:background="@drawable/cell_shape"
+                      android:orientation="vertical"
+                      android:paddingStart="10dp"
+                      android:paddingTop="5dp"
+                      android:elevation="5dp"
+                      android:backgroundTint="@color/white"
+                      >
+
+                      <TextView
+                          android:layout_width="wrap_content"
+                          android:layout_height="0dp"
+                          android:layout_weight="1"
+                          android:text="District"
+                          android:textColor="@color/black"
+                          android:textSize="12sp" />
+
+                      <Spinner
+                          android:id="@+id/districtSpinner"
+                          android:layout_width="match_parent"
+                          android:layout_height="30dp"
+                          android:elevation="10sp"
+
+                          />
+
+
+                  </LinearLayout>
+
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginLeft="8dp"
+                      android:layout_marginTop="8dp"
+                      android:layout_marginRight="8dp"
+                      android:background="@drawable/cell_shape"
+                      android:orientation="vertical"
+                      android:paddingStart="10dp"
+                      android:paddingTop="5dp"
+                      android:elevation="5dp"
+                      android:backgroundTint="@color/white"
+                      >
+
+                      <TextView
+                          android:layout_width="wrap_content"
+                          android:layout_height="0dp"
+                          android:layout_weight="1"
+                          android:text="Thana"
+                          android:textColor="@color/black"
+                          android:textSize="12sp" />
+
+                      <Spinner
+                          android:id="@+id/thanaSpinner"
+                          android:layout_width="match_parent"
+                          android:layout_height="30dp"
+                          android:elevation="10sp" />
+
+
+                  </LinearLayout>-->
+             <!--   <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:elevation="5dp"
+                    android:hint="Union">
+
+                    <EditText
+                        android:id="@+id/unionTxt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white" />
+                </com.google.android.material.textfield.TextInputLayout>-->
+
+             <!--   <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:elevation="5dp"
+                    android:hint="Remarks">
+
+                    <EditText
+                        android:id="@+id/remarksTxt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white" />
+                </com.google.android.material.textfield.TextInputLayout>
+-->
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/psubmitBnt"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="10dp"
+                android:backgroundTint="@color/main"
+                android:elevation="5dp"
+                android:text="@string/tag_submit"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:fontFamily="@font/lato_bold"/>
+            <Button
+                android:id="@+id/pupdateBnt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/tag_update"
+                android:backgroundTint="@color/pBlue"
+                android:textColor="@color/white"
+                android:elevation="5dp"
+                android:textSize="16sp"
+                android:fontFamily="@font/lato_bold"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

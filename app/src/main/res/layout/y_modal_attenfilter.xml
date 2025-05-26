@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:id="@+id/ddDiv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        android:elevation="5dp"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:weightSum="4">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/latoregular"
+            android:text="From Date :"
+            android:layout_gravity="center"
+            android:textColor="@color/main"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/txtFromDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="2"
+            android:fontFamily="@font/lato"
+            android:paddingLeft="5dp"
+            android:textSize="16sp"
+
+            />
+
+        <ImageView
+            android:id="@+id/datePickerFromDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_calendar"
+
+
+            />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        android:elevation="5dp"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:weightSum="4">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="To Date : "
+            android:textColor="@color/main"
+            android:textSize="13sp"
+            android:layout_gravity="center"
+            android:fontFamily="@font/latoregular"
+
+
+            />
+
+        <TextView
+            android:id="@+id/txtToDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+           android:layout_gravity="center"
+            android:paddingLeft="5dp"
+            android:textSize="16sp"
+            android:fontFamily="@font/lato"
+
+            />
+
+        <ImageView
+            android:id="@+id/datePickerToDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_calendar"
+
+
+            />
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/psubmitBnt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@color/main"
+        android:text="Done"
+        android:textColor="@color/white" />
+
+</LinearLayout>

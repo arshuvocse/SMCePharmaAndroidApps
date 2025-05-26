@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/home_icon"
+        android:title="@string/home_txt_menu"
+        app:cnb_textColor="@color/white"
+        app:cnb_iconColor="@color/white"
+        app:cnb_backgroundColor="@color/main"
+
+
+        />
+    <item
+        android:id="@+id/navigation_approval"
+        android:icon="@drawable/approved"
+        android:title="@string/approval_txt_menu"
+        app:cnb_textColor="@color/white"
+        app:cnb_iconColor="@color/white"
+        app:cnb_backgroundColor="@color/main"
+        />
+    <item
+        android:id="@+id/navigation_reports"
+        android:icon="@drawable/ic_files"
+        android:title="@string/reports_txt_menu"
+        app:cnb_textColor="@color/white"
+        app:cnb_iconColor="@color/white"
+        app:cnb_backgroundColor="@color/main"
+        />
+    <item
+        android:id="@+id/navigation_more"
+        android:icon="@drawable/settingss"
+        android:title="@string/more_txt_menu"
+        app:cnb_textColor="@color/white"
+        app:cnb_iconColor="@color/white"
+        app:cnb_backgroundColor="@color/main"
+        />
+</menu>

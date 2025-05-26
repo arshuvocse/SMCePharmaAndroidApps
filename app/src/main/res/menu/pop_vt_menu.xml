@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/navigation_visit"
+        android:icon="@drawable/home_icon"
+        android:title="@string/visit_txt_menu"
+        app:cnb_textColor="@color/white"
+        app:cnb_iconColor="@color/white"
+        app:cnb_backgroundColor="@color/main"
+        />
+    <item
+        android:id="@+id/navigation_tour"
+        android:icon="@drawable/home_icon"
+        android:title="@string/tour_txt_menu"
+        app:cnb_textColor="@color/white"
+        app:cnb_iconColor="@color/white"
+        app:cnb_backgroundColor="@color/main"
+        />
+    <item
+        android:id="@+id/navigation_dwsp"
+        android:icon="@drawable/home_icon"
+        android:title="@string/dwsp_txt_menu"
+        app:cnb_textColor="@color/white"
+        app:cnb_iconColor="@color/white"
+        app:cnb_backgroundColor="@color/main"
+        />
+</menu>

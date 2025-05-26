@@ -1,0 +1,61 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.SalesSolution" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/smcblue</item>
+        <item name="colorPrimaryVariant">#DF751D</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/smcblue</item>
+        <item name="colorSecondaryVariant">@color/smcblue</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/smcblue_deep</item>
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+
+    </style>
+
+    <style name="AlertDialogStyle" parent="Theme.MaterialComponents.Dialog">
+        <item name="colorPrimary">@color/main</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorPrimary">#f3f3f3</item>
+        <item name="android:fontFamily">@font/roboto</item>
+    </style>
+    <style name="AlertDialogStyle2" parent="Theme.MaterialComponents.Dialog">
+        <item name="colorPrimary">@color/main</item>
+        <item name="android:textColor">@color/main</item>
+        <item name="android:textColorPrimary">@color/main</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="materialAlertDialogTitleTextStyle">@font/robotolight</item>
+        <item name="materialAlertDialogBodyTextStyle">@font/robotolight</item>
+        <!--<item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.SmallComponent</item>--> <!-- your custom shape appearance for your dialog. In my case, I am changing corner radius of dialog to rounded 20dp corners-->
+        <item name="colorSurface">@color/mainshadow</item>
+        <item name="android:subtitleTextStyle">@font/robotolight</item>
+      <!--  <item name="buttonBarPositiveButtonStyle">@style/Widget.App.Button</item>
+
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.App.Button</item>-->
+    </style>
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.MaterialComponents.ActionBar">
+        <!-- Customize color of navigation drawer icon and back arrow -->
+        <item name="colorControlNormal">@color/white</item>
+        <item name="android:fontFamily">@font/roboto</item>
+    </style>
+
+    <style name="ToolbarThemeMainColor" parent="@style/Widget.MaterialComponents.ActionBar.Primary">
+        <!-- Customize color of navigation drawer icon and back arrow -->
+        <item name="colorControlNormal">@color/main</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+   <!-- <style name="MyTransparentBottomSheetDialogTheme" parent="Theme.Lalbaba_bottomsheet">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:colorBackground">#7F000000</item>
+    </style>-->
+</resources>

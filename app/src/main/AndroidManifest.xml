@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.creatrix.salessolution">
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the "MyLocation" functionality.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- This permissions are neccessary for broadcast receiver -->
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="true" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission
+        android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
+        tools:ignore="ProtectedPermissions" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_logomain"
+        android:keepScreenOn="true"
+        android:label="@string/app_name"
+        android:process="com.creatrix.salessolution"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_logomain_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SalesSolution"
+        android:usesCleartextTraffic="true"
+        tools:node="merge"
+        tools:replace="android:allowBackup">
+        <activity
+            android:name=".Activity.Reports.LedgerReportActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Activity.Reports.ReceiveableReportActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Activity.SelfReports.ReportTVAActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Activity.Doctor.TourePlan.TP.ActivityTPDetails"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Activity.Doctor.TourePlan.TP.ActivityTourPlan_"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Activity.Approval.VisitPlan.ActivityDash"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Activity.Reports.Collection.ActivityCollection"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Activity.Reports.BonusGift.ActivityBonusGift"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Activity.Reports.DWSPReportActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.DWSP.DWSPApprovalListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.DWSP.DWSPTargetActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.DoctorPropertyChangeActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.UpdateDoctorActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Customer.UpdateCustomerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Customer.CustomerPropertyChangeActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.SelfReports.ExpenseSummery.ExpenseSummeryActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.SelfReports.SalesReport.SalesReportActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.MapActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.DWSP.DWSPActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.Leave.LeaveApprovalViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.Leave.LeaveApprovalListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.Prescription.PrescriptionApprovalViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.Prescription.PrescriptionApprovalListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.DCR.DcrApprovalViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.DCR.DcrApprovalListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.Order.OrderApprovalViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.Order.OrderApprovalListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.DA.TeamDAViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.DA.TeamDAListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.VisitPlan.VisitPlanActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.Pending.DoctorPendingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Customer.Pending.CustomerPendingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Team.TeamListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.TourPlan.TourPlanApprovalActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Approval.VisitPlan.VisitPlanApprovalActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.TourePlan.TourPlanDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.TourePlan.TourePlanAC"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Customer.Approval.CustomerApprovalListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Customer.Approval.CustomerApprovalActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.Approval.DoctorApprovalDetails"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.Approval.DoctorApprovalListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.MileageClaim.Report.TeamMileageClaimActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.VisitPlan.VisitPlanDetailsActivity"
+            android:noHistory="true" />
+        <activity
+            android:name=".Activity.Doctor.VisitPlan.DoctorVisitPlanAC"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.MileageClaim.MileageClaimViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Expense.ExpenceClaimViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Notice.ImageFullScreenActivity"
+            android:screenOrientation="portrait" />
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".Activity.Pending.PendingListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Expense.Approval.TeamExpClaimReportActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Leave.TeamLeaveViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Attendance.TeamAttenViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Attendance.TeamAttendancReportActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Training.TrainingViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Training.TrainingListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Notice.NoticeViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.SyncFromServerAc"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".Activity.ChangePassword"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.OrderProcess.SampleOrderActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.MileageClaim.Report.MileageClaimListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.MileageClaim.AddMileageClaimActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.SelfReports.LeaveRecordsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.DoctorTourPlanActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.SelfReports.PrescriptionListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.DoctorListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.DoctorDashboardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.NotificationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.MainDashboardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.MainTrackingDashboardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.TodaysTaskActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.SelfReports.ReportsDcrActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.SelfReports.ReportsTargetAcheiActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.SelfReports.ReportsStockActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.SelfReports.Reports_TadaActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Expense.Report.ExpenseClaimReportsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Attendance.AttendanceReportsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.CampainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.ProductViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.TourePlan.TourPlanActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.DCR.AddDCRActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Expense.ExpanseClamActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.Prescription.AddPrescriptionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.DA.TADAClaimActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Customer.CustomerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Doctor.AddDoctor.DoctorActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Leave.LeaveActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.MioOrderTrackingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.MioOrderListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Customer.CustomerOrderListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Customer.CustomerOrderTrackingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Customer.CustomerDashboarActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.Notice.NoticeActivity"
+            android:screenOrientation="portrait" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+        <activity android:name=".Activity.Attendance.AttendanceActivity" />
+        <activity android:name=".Activity.MoreActivity" />
+        <activity android:name=".Activity.ReportsActivity" />
+        <activity android:name=".Activity.OrderListActivity" />
+        <activity android:name=".Activity.OrderMainActivity" />
+        <activity android:name=".Activity.OrderStartActivity" />
+        <activity android:name=".Activity.Customer.CustomerListActivity" />
+        <activity android:name=".Activity.DashboardActivity" />
+        <activity
+            android:name=".Activity.MainActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".HelperActivity.SplashScreenActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Activity.TestingPurposeActivity" />
+
+        <service
+            android:name=".Services.LocationService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="location" />
+        <service
+            android:name=".Services.NotificationService2"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".Services.DashboardRefresh"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+
+                <!-- Intent filters for broadcast receiver -->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

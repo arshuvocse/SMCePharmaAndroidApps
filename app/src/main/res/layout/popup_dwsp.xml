@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:orientation="horizontal"
+            android:padding="2dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="start|center"
+                android:text="FCB"
+                android:textColor="@color/black" />
+
+            <EditText
+                android:id="@+id/et_fcb"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="@drawable/shape_recbg"
+                android:focusable="true"
+                android:gravity="center"
+                android:fontFamily="@font/lato"
+                android:textColor="@color/black"
+                android:inputType="numberDecimal"
+                android:padding="4dp"
+                android:singleLine="true"
+                android:text=""
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:orientation="horizontal"
+            android:padding="2dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="start|center"
+                android:text="CAMPAIGN"
+                android:textColor="@color/black" />
+
+            <EditText
+                android:id="@+id/et_camount"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:background="@drawable/shape_recbg"
+                android:focusable="true"
+                android:gravity="center"
+                android:inputType="numberDecimal"
+                android:padding="4dp"
+                android:singleLine="true"
+                android:text=""
+                android:fontFamily="@font/lato"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <!-- <androidx.appcompat.widget.AppCompatButton
+                 android:id="@+id/btn_plus"
+                 android:layout_width="38dp"
+                 android:layout_height="38dp"
+                 style="@style/Widget.AppCompat.Button.Small"
+                 android:text="@string/common_plus"
+                 android:textColor="@color/white"
+                 android:backgroundTint="@color/main"/>-->
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:orientation="horizontal"
+            android:padding="2dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="start|center"
+                android:text="GENERAL"
+                android:textColor="@color/black" />
+
+            <EditText
+                android:id="@+id/et_gamount"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:background="@drawable/shape_recbg"
+                android:focusable="true"
+                android:gravity="center"
+                android:inputType="numberDecimal"
+                android:padding="4dp"
+                android:fontFamily="@font/lato"
+                android:textColor="@color/black"
+                android:singleLine="true"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll" >
+        <Button
+            android:id="@+id/canceldwsp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:text="CANCEL"
+            android:backgroundTint="@color/red"
+           />
+        <Button
+            android:id="@+id/savedwsp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:text="SAVE"
+            />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
