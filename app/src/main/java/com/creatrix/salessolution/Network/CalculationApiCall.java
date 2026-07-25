@@ -78,7 +78,7 @@ Call<List<ExpenseTypeMaster>> Get_ExpenseType(@Query("RoleType") String roleType
 
 
     @GET("/api/Calculation/GetTADA_Applog")
-    Call<List<DAListData>> GetDAApproval(@Query("pram") String pram, @QueryMap Map<String,String> mapparam);
+    Call<List<DAListData>> GetDAApproval(@Query(value = "pram", encoded = true) String pram, @QueryMap Map<String,String> mapparam);
 
     @POST("/api/Calculation/SaveTADA_Applog")
     Call<ResultInfo> SaveDAApproval(@Body ApproveDARQ approveDARQ);

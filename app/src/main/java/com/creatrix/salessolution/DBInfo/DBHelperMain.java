@@ -58,7 +58,7 @@ public class DBHelperMain extends SQLiteOpenHelper {
 
         //new Table dcr
         String tblDcrInfo = "Create Table if not exists tblDcrInfo (DcrId Integer primary key AUTOINCREMENT," +
-                "DoctorId Integer,DoctorName varchar(500),DocContact varchar(500),DoctorTypeName varchar(500),ChemberName varchar(500),ProgramTypeName varchar(500),SessionUser Integer,DcrDate varchar(500),EntryTime varchar(500),VisitTypeId Integer,VisitTypeName varchar(500),ChemberId Integer,Remarks varchar(500))";
+                "DoctorId Integer,DoctorName varchar(500),DocContact varchar(500),DoctorTypeName varchar(500), CCType varchar(500), ChemberName varchar(500),ProgramTypeName varchar(500),SessionUser Integer,DcrDate varchar(500),EntryTime varchar(500),VisitTypeId Integer,VisitTypeName varchar(500),ChemberId Integer,Remarks varchar(500))";
         /* List<Product> aProList;*/
         String tbl_UserRole = "Create Table if not exists tbl_UserRole (pk Integer primary key AUTOINCREMENT,UserRoleID Integer,RoleName varchar(500))";
         String tbl_UserByRole = "Create Table if not exists tbl_UserByRole (pk Integer primary key AUTOINCREMENT,EmpInfoId Integer,EmpName varchar(500),EmpMasterCode varchar(500),UserRoleID Integer)";
@@ -207,7 +207,7 @@ public class DBHelperMain extends SQLiteOpenHelper {
 
 
         String tblCustomerInfo = "Create Table if not exists tblCustomerInfo(CustomerMasterId Integer, " +
-                "CustomerName varchar(500),CustomerCode varchar(500),CustomerAdress varchar(500)," +
+                "CustomerName varchar(500),CustomerBsPCode varchar(500), CustomerBsPTag varchar(500),CustomerCode varchar(500),CustomerAdress varchar(500)," +
                 "CustomerType varchar(500),CustomerCell varchar(500),CustomerBalance varchar(500),CustomerCreditlimit varchar(500),Market varchar(500),MarketCode varchar(500),GroupId varchar(500),RegionId varchar(500),AreaId varchar(500),TerritoryId varchar(500),SubTerritoryId varchar(500),MarketId varchar(500),Note varchar(500)," +
                 "CustomerCheck Integer,CustomerTypeId Integer,ProgramTypeId Integer,SMCTypeId Integer)";
 

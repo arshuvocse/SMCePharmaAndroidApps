@@ -91,12 +91,14 @@ public class DATeamPresenter implements IDATeam.Presenter {
             CalculationApiCall service = RetrofitClientInstance.getRetrofitInstance().create(CalculationApiCall.class);
             Call<List<DAListData>> call = service.GetDAApproval(param,filter);
             HttpUrl ds = call.request().url();
+            Log.d("TeamDAList", "GetDAApproval param=" + param + " filter=" + new Gson().toJson(filter) + " url=" + ds);
             call.enqueue(new Callback<List<DAListData>>() {
                 @Override
                 public void onResponse(@NonNull Call<List<DAListData>> call, @NonNull Response<List<DAListData>> response) {
-                    if(response!=null)
+                    if(response.body()!=null)
                     {
                         view.onTeamDAList(response.body());
+                        Log.d("TeamDAList", "GetDAApproval success size=" + (response.body() == null ? 0 : response.body().size()));
                     }else {
                         view.onSaveError("Something went wrong");
                     }
@@ -107,10 +109,12 @@ public class DATeamPresenter implements IDATeam.Presenter {
                     if(t instanceof SocketTimeoutException){
                         view.onSaveError("Slow Network Detected!!");
                     }
+                    Log.e("TeamDAList", "GetDAApproval failed", t);
                 }
             });
 
         }catch (Exception ex){
+            Log.e("TeamDAList", "GetDAApproval exception", ex);
         }
     }
 }

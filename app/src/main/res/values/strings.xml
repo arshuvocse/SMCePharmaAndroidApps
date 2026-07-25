@@ -223,14 +223,17 @@
     <string name="tag_confirm_password">Confirm Password</string>
     <string name="tag_creatrix_soft_tech_ltd">Creatrix Soft Tech Ltd.</string>
     <string name="change">Change</string>
+    <string name="select_code">select code</string>
     <string name="nid_number">NID Number</string>
     <string name="trade_license_number">Trade License Number</string>
     <string name="subterritory">SubTerritory</string>
     <string name="add_customer">ADD Customer</string>
+    <string name="editcustomer">Edit Customer</string>
     <string name="tag_zone">Zone</string>
     <string name="tag_area">Area</string>
     <string name="tag_customer_list">Customer List</string>
     <string name="tag_customer_directory">Customer Directory</string>
+    <string name="tag_customer_editlist">Customer Edit List</string>
     <string name="tag_search_customer">Search Customer</string>
     <string name="tag_update_market">Update Market</string>
     <string name="tag_view_details">View Details</string>
@@ -289,6 +292,8 @@
     <string name="morning">Morning</string>
     <string name="other_visit">Other Visit</string>
     <string name="market_visit">Market Visit</string>
+    <string name="_6_10_report">6/10 Project Report</string>
+    <string name="make_dcr_underlined"><u>Make DCR</u></string>
 
 
     <string-array name="filter_status">

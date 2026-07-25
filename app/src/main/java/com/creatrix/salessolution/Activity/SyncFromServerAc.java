@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -85,6 +84,7 @@ import com.google.gson.Gson;
 
 import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -169,9 +169,15 @@ public class SyncFromServerAc extends AppCompatActivity implements ISyncMaster.V
     String CurrentYear;
     String empcode;
     String emprole;
-    ProgressDialog pd;
     int empId, year;
     boolean masterDone, areaDone, customerDone, doctorDone, productDone, typeDone;
+
+    // Sequential sync queue: one API call runs at a time, retried once on failure, then the queue moves on.
+    private final List<Runnable> syncQueue = new ArrayList<>();
+    private final List<String> syncStepNames = new ArrayList<>();
+    private int currentStepIndex = 0;
+    private int currentStepAttempt = 0;
+    private static final int MAX_ATTEMPTS = 2;
 
     @Override
 
@@ -204,74 +210,115 @@ public class SyncFromServerAc extends AppCompatActivity implements ISyncMaster.V
         }
     }
 
-    private void callRunSync(int empId, int year, String empcode, String emprole) {
-        pd = new ProgressDialog(SyncFromServerAc.this);
-        pd.setMessage("Please wait Synchronizing....");
-        pd.setCancelable(false);
-        pd.setCanceledOnTouchOutside(false);
-        pd.show();
-
-        spresenter.cllDoctor(empId);
-       // spresenter.cllChamberName(empId);
-
-        spresenter.cllCustomer(empId);
-        spresenter.cllCustomerStation(empId);
-        spresenter.callProviderType();
-       // spresenter.cllProgramtypey(empId);
-
-        spresenter.cllNSM(empcode, emprole);
-        spresenter.cllDZSM(empcode, emprole);
-        spresenter.cllAM(empcode, emprole);
-        spresenter.cllMIO(empcode, emprole);
-        spresenter.cllGroup(empcode, emprole);
-        spresenter.cllZone(empcode, emprole);
-        spresenter.cllArea(empcode, emprole);
-        spresenter.cllTeritory(empcode, emprole);
-        spresenter.cllSTeritory(empcode, emprole);
-        spresenter.cllMarket(empcode, emprole);
-        spresenter.cllDesignation(empId);
-        spresenter.cllDegree(empId);
-        spresenter.cllSpeciality(empId);
-        spresenter.cllSpecialday(empId);
-        spresenter.cllInstitution(empId);
-
-        spresenter.cllChamberType(empId);
-        spresenter.cllChamberName(empId);
-        spresenter.cllBrand(empId);
-        spresenter.cllDoccategory(empId);
-
-
-        spresenter.cllUserRole(empId);
-        spresenter.cllUserByRole(empId);
-        spresenter.cllProduct(empId);
-        spresenter.cllProductSample(empId);
-        spresenter.cllProductGift(empId);
-        spresenter.cllQuotedPrice(empId);
-
-        spresenter.cllDoctorType(empId, year);
-        spresenter.cllCustomerType(empId, year);
-
-        spresenter.cllDoctorContactType(empId, year);
-        spresenter.cllExpenseType(empId, year,emprole);
-        spresenter.cllLeaveType(empId, year);
-        spresenter.cllPrescriptionType(empId, year);
-        spresenter.cllNonEffectivereason(empId, year);
-        spresenter.cllTransportList(empId, year);
-        spresenter.cllTourPurpose(empId, year);
-        spresenter.cllVisitType(empId, year);
-        spresenter.callSMCType();
+    private void addStep(String name, Runnable r) {
+        syncStepNames.add(name);
+        syncQueue.add(r);
     }
-    private void hitMain() {
-        if (masterDone && areaDone && customerDone
-                && doctorDone && productDone && typeDone) {
-           // Toast.makeText(this, "Master"+String.valueOf(masterDone), Toast.LENGTH_SHORT).show();
-           // Toast.makeText(this, "Master"+String.valueOf(areaDone), Toast.LENGTH_SHORT).show();
-           // Toast.makeText(this, "Master"+String.valueOf(customerDone), Toast.LENGTH_SHORT).show();
-           // Toast.makeText(this, "Master"+String.valueOf(doctorDone), Toast.LENGTH_SHORT).show();
-           // Toast.makeText(this, "Master"+String.valueOf(productDone), Toast.LENGTH_SHORT).show();
-           // Toast.makeText(this, "Master"+String.valueOf(typeDone), Toast.LENGTH_SHORT).show();
+
+    private void callRunSync(int empId, int year, String empcode, String emprole) {
+        syncQueue.clear();
+        syncStepNames.clear();
+
+        addStep("Group", () -> spresenter.cllGroup(empcode, emprole));
+        addStep("Doctor List", () -> spresenter.cllDoctor(empId));
+        addStep("Customer", () -> spresenter.cllCustomer(empId));
+        addStep("Customer Station", () -> spresenter.cllCustomerStation(empId));
+        addStep("Provider Type", () -> spresenter.callProviderType());
+
+        addStep("NSM", () -> spresenter.cllNSM(empcode, emprole));
+        addStep("RSM", () -> spresenter.cllDZSM(empcode, emprole));
+        addStep("ASM", () -> spresenter.cllAM(empcode, emprole));
+        addStep("MIO", () -> spresenter.cllMIO(empcode, emprole));
+
+        addStep("Region", () -> spresenter.cllZone(empcode, emprole));
+        addStep("Area", () -> spresenter.cllArea(empcode, emprole));
+        addStep("Territory", () -> spresenter.cllTeritory(empcode, emprole));
+        addStep("Sub Territory", () -> spresenter.cllSTeritory(empcode, emprole));
+        addStep("Market", () -> spresenter.cllMarket(empcode, emprole));
+        addStep("Designation", () -> spresenter.cllDesignation(empId));
+        addStep("Degree", () -> spresenter.cllDegree(empId));
+        addStep("Speciality", () -> spresenter.cllSpeciality(empId));
+        addStep("Special Day", () -> spresenter.cllSpecialday(empId));
+        addStep("Institution", () -> spresenter.cllInstitution(empId));
+
+        addStep("Chamber Type", () -> spresenter.cllChamberType(empId));
+        addStep("Chamber Name", () -> spresenter.cllChamberName(empId));
+        addStep("Brand", () -> spresenter.cllBrand(empId));
+        addStep("Doctor Category", () -> spresenter.cllDoccategory(empId));
+        addStep("Division", () -> spresenter.cllDivision());
+        addStep("District", () -> spresenter.cllDistrict());
+        addStep("Thana", () -> spresenter.cllThana());
+
+
+        addStep("User Role", () -> spresenter.cllUserRole(empId));
+        addStep("User By Role", () -> spresenter.cllUserByRole(empId));
+        addStep("Product", () -> spresenter.cllProduct(empId));
+        addStep("Product Sample", () -> spresenter.cllProductSample(empId));
+        addStep("Product Gift", () -> spresenter.cllProductGift(empId));
+        addStep("Quoted Price", () -> spresenter.cllQuotedPrice(empId));
+
+        addStep("Doctor Type", () -> spresenter.cllDoctorType(empId, year));
+        addStep("Customer Type", () -> spresenter.cllCustomerType(empId, year));
+
+        addStep("Doctor Contact Type", () -> spresenter.cllDoctorContactType(empId, year));
+        addStep("Expense Type", () -> spresenter.cllExpenseType(empId, year, emprole));
+        addStep("Leave Type", () -> spresenter.cllLeaveType(empId, year));
+        addStep("Prescription Type", () -> spresenter.cllPrescriptionType(empId, year));
+        addStep("Non Effective Reason", () -> spresenter.cllNonEffectivereason(empId, year));
+        addStep("Transport", () -> spresenter.cllTransportList(empId, year));
+        addStep("Tour Purpose", () -> spresenter.cllTourPurpose(empId, year));
+        addStep("Visit Type", () -> spresenter.cllVisitType(empId, year));
+        addStep("SMC Type", () -> spresenter.callSMCType());
+
+        startQueue();
+    }
+
+    private void startQueue() {
+        currentStepIndex = 0;
+        currentStepAttempt = 0;
+        viewBindings.splashProgress.setMax(Math.max(syncQueue.size(), 1));
+        runCurrentStep();
+    }
+
+    private void runCurrentStep() {
+        if (currentStepIndex >= syncQueue.size()) {
             AllSyncDone();
+            return;
         }
+        String name = syncStepNames.get(currentStepIndex);
+        int percent = (int) ((currentStepIndex * 100.0f) / syncQueue.size());
+        viewBindings.top.setText("Synchronizing " + name + "... (" + (currentStepIndex + 1) + "/" + syncQueue.size() + ") " + percent + "%");
+        viewBindings.splashProgress.setProgress(currentStepIndex);
+        try {
+            syncQueue.get(currentStepIndex).run();
+        } catch (Exception ex) {
+            Log.e("SyncFromServerAc", "Failed to launch step: " + name, ex);
+            advanceQueue();
+        }
+    }
+
+    // Guarantees that an exception thrown while handling a callback never freezes the queue.
+    private void runSafely(Runnable body) {
+        try {
+            body.run();
+        } catch (Exception ex) {
+            Log.e("SyncFromServerAc", "Callback handling error", ex);
+        }
+    }
+
+    private void handleStepResult(boolean success) {
+        if (!success && currentStepAttempt < MAX_ATTEMPTS - 1) {
+            currentStepAttempt++;
+            runCurrentStep();
+            return;
+        }
+        advanceQueue();
+    }
+
+    private void advanceQueue() {
+        currentStepIndex++;
+        currentStepAttempt = 0;
+        runCurrentStep();
     }
 
     //Method to run progress bar for 5 seconds
@@ -286,33 +333,18 @@ public class SyncFromServerAc extends AppCompatActivity implements ISyncMaster.V
             String today = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
             SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
             String todaytime = dateFormat.format(new Date());
-            try {
-              boolean isTrue=  syncDb_helper.Insert_InitTableB(today, todaytime);
-              if(isTrue)
-              {
-                  pd.dismiss();
-                  System.out.println("AllSync Done!!!!");
-                  Intent i = new Intent(SyncFromServerAc.this, MainDashboardActivity.class);
-                  i.addFlags(i.FLAG_ACTIVITY_CLEAR_TOP | i.FLAG_ACTIVITY_CLEAR_TASK | i.FLAG_ACTIVITY_NEW_TASK);
-                  startActivity(i);
-                  overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-/*
-                   Handler handler = new Handler();
-                   handler.postDelayed(() -> {
-                    Intent i = new Intent(SyncFromServerAc.this, MainDashboardActivity.class);
-                    i.addFlags(i.FLAG_ACTIVITY_CLEAR_TOP | i.FLAG_ACTIVITY_CLEAR_TASK | i.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                }, 2000);*/
-              }
-
-            } catch (Exception ex) {
-                 pd.dismiss();
+            boolean isTrue = syncDb_helper.Insert_InitTableB(today, todaytime);
+            if (!isTrue) {
+                Log.e("SyncFromServerAc", "Failed to write final sync marker");
             }
-
-
+            viewBindings.top.setText("Synchronization complete");
+            viewBindings.splashProgress.setProgress(viewBindings.splashProgress.getMax());
+            System.out.println("AllSync Done!!!!");
+            Intent i = new Intent(SyncFromServerAc.this, MainDashboardActivity.class);
+            i.addFlags(i.FLAG_ACTIVITY_CLEAR_TOP | i.FLAG_ACTIVITY_CLEAR_TASK | i.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         } catch (Exception ex) {
-            pd.dismiss();
             ex.printStackTrace();
             ToastManagment.GetLongToast(SyncFromServerAc.this, "Something went wrong");
         }
@@ -341,296 +373,331 @@ public class SyncFromServerAc extends AppCompatActivity implements ISyncMaster.V
     @Override
     protected void onPause() {
         super.onPause();
-        pd.dismiss();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        pd.dismiss();
     }
 
     @Override
     public void onGetNSM(String t, boolean a) {
-        isNSMDone = a;
-        if (isNSMDone && isRSMDone && isASMDone
-                && isMIODone && isRoleList && isRoleUser)  {
-            masterDone=true;
-            hitMain();
-            viewBindings.masterAlldoneTxt.setText("----Complete");
-        }
-
+        runSafely(() -> {
+            isNSMDone = a;
+            if (isNSMDone && isRSMDone && isASMDone
+                    && isMIODone && isRoleList && isRoleUser)  {
+                masterDone=true;
+                viewBindings.masterAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetDZSM(String t, boolean a) {
-        isRSMDone = a;
-        if (isNSMDone && isRSMDone && isASMDone
-                && isMIODone && isRoleList && isRoleUser) {
-            masterDone=true;
-            hitMain();
-            viewBindings.masterAlldoneTxt.setText("----Complete");
-        }
-
+        runSafely(() -> {
+            isRSMDone = a;
+            if (isNSMDone && isRSMDone && isASMDone
+                    && isMIODone && isRoleList && isRoleUser) {
+                masterDone=true;
+                viewBindings.masterAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetAM(String t, boolean a) {
-        isASMDone = a;
-        if (isNSMDone && isRSMDone && isASMDone
-                && isMIODone && isRoleList && isRoleUser) {
-            masterDone=true;
-            hitMain();
-            viewBindings.masterAlldoneTxt.setText("----Complete");
-        }
+        runSafely(() -> {
+            isASMDone = a;
+            if (isNSMDone && isRSMDone && isASMDone
+                    && isMIODone && isRoleList && isRoleUser) {
+                masterDone=true;
+                viewBindings.masterAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetMIO(String t, boolean a) {
-        isMIODone = a;
-        if (isNSMDone && isRSMDone && isASMDone
-                && isMIODone && isRoleList && isRoleUser) {
-            masterDone=true;
-            hitMain();
-            viewBindings.masterAlldoneTxt.setText("----Complete");
-        }
-
+        runSafely(() -> {
+            isMIODone = a;
+            if (isNSMDone && isRSMDone && isASMDone
+                    && isMIODone && isRoleList && isRoleUser) {
+                masterDone=true;
+                viewBindings.masterAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetGroup(String t, boolean a) {
-        viewBindings.groupTxt.setText(t);
-        isGroupDone = a;
-        if (isGroupDone && isRegionDone && isAreaDone
-                && isTeritorryDone && isSubTeritorryDone && isMarketDone) {
-            areaDone=true;
-            hitMain();
-            viewBindings.areaAlldoneTxt.setText("----Complete");
-        }
+        runSafely(() -> {
+            viewBindings.groupTxt.setText(t);
+            isGroupDone = a;
+            if (isGroupDone && isRegionDone && isAreaDone
+                    && isTeritorryDone && isSubTeritorryDone && isMarketDone) {
+                areaDone=true;
+                viewBindings.areaAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetZone(String t, boolean a) {
-        viewBindings.regionTxt.setText(t);
-        isRegionDone = a;
-        if (isGroupDone && isRegionDone && isAreaDone
-                && isTeritorryDone && isSubTeritorryDone && isMarketDone) {
-            areaDone=true;
-            hitMain();
-            viewBindings.areaAlldoneTxt.setText("----Complete");
-        }
+        runSafely(() -> {
+            viewBindings.regionTxt.setText(t);
+            isRegionDone = a;
+            if (isGroupDone && isRegionDone && isAreaDone
+                    && isTeritorryDone && isSubTeritorryDone && isMarketDone) {
+                areaDone=true;
+                viewBindings.areaAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetArea(String t, boolean a) {
-        viewBindings.areaTxt.setText(t);
-        isAreaDone = a;
-        if (isGroupDone && isRegionDone && isAreaDone
-                && isTeritorryDone && isSubTeritorryDone && isMarketDone) {
-            areaDone=true;
-            hitMain();
-            viewBindings.areaAlldoneTxt.setText("----Complete");
-        }
+        runSafely(() -> {
+            viewBindings.areaTxt.setText(t);
+            isAreaDone = a;
+            if (isGroupDone && isRegionDone && isAreaDone
+                    && isTeritorryDone && isSubTeritorryDone && isMarketDone) {
+                areaDone=true;
+                viewBindings.areaAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetTeritory(String t, boolean a) {
-        viewBindings.teritoryTxt.setText(t);
-        isTeritorryDone = a;
-        if (isGroupDone && isRegionDone && isAreaDone
-                && isTeritorryDone && isSubTeritorryDone && isMarketDone) {
-            areaDone=true;
-            hitMain();
-            viewBindings.areaAlldoneTxt.setText("----Complete");
-        }
+        runSafely(() -> {
+            viewBindings.teritoryTxt.setText(t);
+            isTeritorryDone = a;
+            if (isGroupDone && isRegionDone && isAreaDone
+                    && isTeritorryDone && isSubTeritorryDone && isMarketDone) {
+                areaDone=true;
+                viewBindings.areaAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetSTeritory(String t, boolean a) {
-        viewBindings.steritoryTxt.setText(t);
-        isSubTeritorryDone = a;
-        if (isGroupDone && isRegionDone && isAreaDone
-                && isTeritorryDone && isSubTeritorryDone && isMarketDone) {
-            areaDone=true;
-            hitMain();
-            viewBindings.areaAlldoneTxt.setText("----Complete");
-        }
+        runSafely(() -> {
+            viewBindings.steritoryTxt.setText(t);
+            isSubTeritorryDone = a;
+            if (isGroupDone && isRegionDone && isAreaDone
+                    && isTeritorryDone && isSubTeritorryDone && isMarketDone) {
+                areaDone=true;
+                viewBindings.areaAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetMarket(String t, boolean a) {
-        viewBindings.marketTxt.setText(t);
-        isMarketDone = a;
-        if (isGroupDone && isRegionDone && isAreaDone
-                && isTeritorryDone && isSubTeritorryDone && isMarketDone) {
-            areaDone=true;
-            hitMain();
-            viewBindings.areaAlldoneTxt.setText("----Complete");
-        }
+        runSafely(() -> {
+            viewBindings.marketTxt.setText(t);
+            isMarketDone = a;
+            if (isGroupDone && isRegionDone && isAreaDone
+                    && isTeritorryDone && isSubTeritorryDone && isMarketDone) {
+                areaDone=true;
+                viewBindings.areaAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetCustomer(String t, boolean a) {
-        viewBindings.custsTxt.setText(t);
-        isCustomerList = a;
-        if (isCustomerList && isCustStationDone) {
-            customerDone=true;
-            viewBindings.custAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.custsTxt.setText(t);
+            isCustomerList = a;
+            if (isCustomerList && isCustStationDone) {
+                customerDone=true;
+                viewBindings.custAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetCustomerStation(String t, boolean a) {
-        viewBindings.custstationTxt.setText(t);
-        isCustStationDone = a;
-        if (isCustomerList && isCustStationDone) {
-            customerDone=true;
-            viewBindings.custAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.custstationTxt.setText(t);
+            isCustStationDone = a;
+            if (isCustomerList && isCustStationDone) {
+                customerDone=true;
+                viewBindings.custAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetDoctor(String t, boolean a) {
-        viewBindings.docTxt.setText(t);
-        isDoctorDone = a;
-        System.out.println("1.DoctorDone"+isDoctorDone);
+        runSafely(() -> {
+            viewBindings.docTxt.setText(t);
+            isDoctorDone = a;
+            System.out.println("1.DoctorDone"+isDoctorDone);
 
-        if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
-                && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
-                isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
-            doctorDone=true;
-            viewBindings.docAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+            if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
+                    && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
+                    isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
+                doctorDone=true;
+                viewBindings.docAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetDesignation(String t, boolean a) {
-       viewBindings.desigTxt.setText(t);
-        isDesignationDone = a;
-        System.out.println("2.DoctorDone"+isDoctorDone);
-        if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
-                && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
-                isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
-            doctorDone=true;
-            viewBindings.docAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.desigTxt.setText(t);
+            isDesignationDone = a;
+            System.out.println("2.DoctorDone"+isDoctorDone);
+            if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
+                    && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
+                    isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
+                doctorDone=true;
+                viewBindings.docAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetDegree(String t, boolean a) {
-       viewBindings.degTxt.setText(t);
-        isDoctorDegreeDone = a;
-        if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
-                && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
-                isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
-            doctorDone=true;
-            hitMain();
-            viewBindings.docAlldoneTxt.setText("----Complete");
-        }
+        runSafely(() -> {
+            viewBindings.degTxt.setText(t);
+            isDoctorDegreeDone = a;
+            if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
+                    && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
+                    isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
+                doctorDone=true;
+                viewBindings.docAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetSpeciality(String t, boolean a) {
-        viewBindings.spcTxt.setText(t);
-        isDoctorSpecilityDone = a;
-        if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
-                && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
-                isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
-            doctorDone=true;
-            viewBindings.docAlldoneTxt.setText("----Complete");
-            hitMain();
-
-        }
+        runSafely(() -> {
+            viewBindings.spcTxt.setText(t);
+            isDoctorSpecilityDone = a;
+            if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
+                    && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
+                    isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
+                doctorDone=true;
+                viewBindings.docAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetSpecialday(String t, boolean a) {
-       viewBindings.spcdayTxt.setText(t);
-        isDoctorSpecilDAyDone = a;
-        if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
-                && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
-                isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
-            doctorDone=true;
-            viewBindings.docAlldoneTxt.setText("----Complete");
-            hitMain();
-
-        }
+        runSafely(() -> {
+            viewBindings.spcdayTxt.setText(t);
+            isDoctorSpecilDAyDone = a;
+            if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
+                    && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
+                    isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
+                doctorDone=true;
+                viewBindings.docAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetInstitution(String t, boolean a) {
-        viewBindings.institutionTxt.setText(t);
-        isDoctorInstitutionDone = a;
-        if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
-                && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
-                isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
-            doctorDone=true;
-            viewBindings.docAlldoneTxt.setText("----Complete");
-            hitMain();
-
-        }
+        runSafely(() -> {
+            viewBindings.institutionTxt.setText(t);
+            isDoctorInstitutionDone = a;
+            if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
+                    && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
+                    isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
+                doctorDone=true;
+                viewBindings.docAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetChamberType(String t, boolean a) {
-       viewBindings.ChamberTxt.setText(t);
-        isChamberType = a;
-        if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
-                && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
-                isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
-            doctorDone=true;
-            viewBindings.docAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.ChamberTxt.setText(t);
+            isChamberType = a;
+            if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
+                    && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
+                    isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
+                doctorDone=true;
+                viewBindings.docAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetChamberName(String t, boolean a) {
-        viewBindings.ChamberNameTxt.setText(t);
-        isChamberName= a;
-        if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
-                && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
-                isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
-            doctorDone=true;
-            viewBindings.docAlldoneTxt.setText("----Complete");
-            hitMain();
-
-        }
+        runSafely(() -> {
+            viewBindings.ChamberNameTxt.setText(t);
+            isChamberName= a;
+            if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
+                    && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
+                    isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
+                doctorDone=true;
+                viewBindings.docAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetBrand(String t, boolean a) {
-       viewBindings.brandTxt.setText(t);
-        isBrand= a;
-        if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
-                && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
-                isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
-            doctorDone=true;
-            viewBindings.docAlldoneTxt.setText("----Complete");
-            hitMain();
-
-        }
+        runSafely(() -> {
+            viewBindings.brandTxt.setText(t);
+            isBrand= a;
+            if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
+                    && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
+                    isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
+                doctorDone=true;
+                viewBindings.docAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetDoccategory(String t, boolean a) {
-       viewBindings.doccatTxt.setText(t);
-        isDocCategory= a;
-        if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
-                && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
-                isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
-            doctorDone=true;
-            viewBindings.docAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.doccatTxt.setText(t);
+            isDocCategory= a;
+            if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
+                    && isDoctorSpecilityDone && isDoctorSpecilDAyDone && isDoctorInstitutionDone && isChamberType &&
+                    isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
+                doctorDone=true;
+                viewBindings.docAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetProgramtypey(String t, boolean a) {
+        // Not part of the sequential queue (source API call is currently disabled in the presenter).
         viewBindings.progtypeTxt.setText(t);
         isProgramType= a;
         if (isDoctorDone && isDesignationDone && isDoctorDegreeDone
@@ -638,230 +705,265 @@ public class SyncFromServerAc extends AppCompatActivity implements ISyncMaster.V
                 isChamberName && isBrand && isDocCategory /*&& isProgramType*/) {
             doctorDone=true;
             viewBindings.docAlldoneTxt.setText("----Complete");
-            hitMain();
         }
     }
 
 
     @Override
     public void onGetUserRole(String t, boolean a) {
-        viewBindings.roleTxt.setText(t);
-        isRoleList= a;
-        if (isNSMDone && isRSMDone && isASMDone
-                && isMIODone && isRoleList && isRoleUser) {
-            masterDone=true;
-            viewBindings.masterAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.roleTxt.setText(t);
+            isRoleList= a;
+            if (isNSMDone && isRSMDone && isASMDone
+                    && isMIODone && isRoleList && isRoleUser) {
+                masterDone=true;
+                viewBindings.masterAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetUserByRole(String t, boolean a) {
-        viewBindings.roleuserTxt.setText(t);
-        isRoleUser= a;
-        if (isNSMDone && isRSMDone && isASMDone
-                && isMIODone && isRoleList && isRoleUser) {
-            masterDone=true;
-            viewBindings.masterAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.roleuserTxt.setText(t);
+            isRoleUser= a;
+            if (isNSMDone && isRSMDone && isASMDone
+                    && isMIODone && isRoleList && isRoleUser) {
+                masterDone=true;
+                viewBindings.masterAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetProduct(String t, boolean a) {
-        viewBindings.productsTxt.setText(t);
-        isProductDone= a;
-        if (isProductDone && isSampleProductDone && isGiftProductDone && isquotedprice) {
-            productDone=true;
-            viewBindings.productAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.productsTxt.setText(t);
+            isProductDone= a;
+            if (isProductDone && isSampleProductDone && isGiftProductDone && isquotedprice) {
+                productDone=true;
+                viewBindings.productAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetProductSample(String t, boolean a) {
-        viewBindings.sampleproductsTxt.setText(t);
-        isSampleProductDone= a;
-        if (isProductDone && isSampleProductDone && isGiftProductDone && isquotedprice) {
-            productDone=true;
-            viewBindings.productAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.sampleproductsTxt.setText(t);
+            isSampleProductDone= a;
+            if (isProductDone && isSampleProductDone && isGiftProductDone && isquotedprice) {
+                productDone=true;
+                viewBindings.productAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetProductGift(String t, boolean a) {
-        viewBindings.giftproductsTxt.setText(t);
-        isGiftProductDone= a;
-        if (isProductDone && isSampleProductDone && isGiftProductDone && isquotedprice) {
-            productDone=true;
-            viewBindings.productAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.giftproductsTxt.setText(t);
+            isGiftProductDone= a;
+            if (isProductDone && isSampleProductDone && isGiftProductDone && isquotedprice) {
+                productDone=true;
+                viewBindings.productAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetQuotedPrice(String t, boolean a) {
-        isquotedprice= a;
-        if (isProductDone && isSampleProductDone && isGiftProductDone && isquotedprice) {
-            productDone=true;
-            viewBindings.productAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            isquotedprice= a;
+            if (isProductDone && isSampleProductDone && isGiftProductDone && isquotedprice) {
+                productDone=true;
+                viewBindings.productAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
     @Override
     public void onGetDoctorType(String t, boolean a) {
-        viewBindings.doctypeTxt.setText(t);
-        isDoctorTypeDone= a;
-        if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
-                && isLeaveTypeDone && isPrescType && isNoneffect && isTransport && isTourPurpose
-                && isVisitTypeDone && isProviderType && isSMCType) {
-            typeDone = true;
-            viewBindings.typeAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.doctypeTxt.setText(t);
+            isDoctorTypeDone= a;
+            if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
+                    && isLeaveTypeDone && isPrescType && isNoneffect && isTransport && isTourPurpose
+                    && isVisitTypeDone && isProviderType && isSMCType) {
+                typeDone = true;
+                viewBindings.typeAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetCustomerType(String t, boolean a) {
-        viewBindings.custtypeTxt.setText(t);
-        isCustTypeDone= a;
-        if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
-                && isLeaveTypeDone && isPrescType && isNoneffect && isTransport && isTourPurpose
-                && isVisitTypeDone && isProviderType && isSMCType) {
-            typeDone=true;
-            viewBindings.typeAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.custtypeTxt.setText(t);
+            isCustTypeDone= a;
+            if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
+                    && isLeaveTypeDone && isPrescType && isNoneffect && isTransport && isTourPurpose
+                    && isVisitTypeDone && isProviderType && isSMCType) {
+                typeDone=true;
+                viewBindings.typeAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetDoctorContactType(String t, boolean a) {
-        viewBindings.dcontypeTxt.setText(t);
-        isDocConType= a;
-        if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
-                && isLeaveTypeDone && isPrescType && isNoneffect &&
-                isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
-            typeDone=true;
-            viewBindings.typeAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.dcontypeTxt.setText(t);
+            isDocConType= a;
+            if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
+                    && isLeaveTypeDone && isPrescType && isNoneffect &&
+                    isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
+                typeDone=true;
+                viewBindings.typeAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetExpenseType(String t, boolean a) {
-        viewBindings.expensetypeTxt.setText(t);
-        isExpenseTypeDone= a;
-        if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
-                && isLeaveTypeDone && isPrescType && isNoneffect &&
-                isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
-            typeDone=true;
-            viewBindings.typeAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.expensetypeTxt.setText(t);
+            isExpenseTypeDone= a;
+            if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
+                    && isLeaveTypeDone && isPrescType && isNoneffect &&
+                    isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
+                typeDone=true;
+                viewBindings.typeAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetLeaveType(String t, boolean a) {
-        viewBindings.leavetypeTxt.setText(t);
-        isLeaveTypeDone= a;
-        if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
-                && isLeaveTypeDone && isPrescType && isNoneffect &&
-                isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
-            typeDone=true;
-            viewBindings.typeAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.leavetypeTxt.setText(t);
+            isLeaveTypeDone= a;
+            if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
+                    && isLeaveTypeDone && isPrescType && isNoneffect &&
+                    isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
+                typeDone=true;
+                viewBindings.typeAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetPrescriptionType(String t, boolean a) {
-        viewBindings.prescriptypeTxt.setText(t);
-        isPrescType= a;
-        if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
-                && isLeaveTypeDone && isPrescType && isNoneffect &&
-                isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
-            typeDone=true;
-            viewBindings.typeAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.prescriptypeTxt.setText(t);
+            isPrescType= a;
+            if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
+                    && isLeaveTypeDone && isPrescType && isNoneffect &&
+                    isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
+                typeDone=true;
+                viewBindings.typeAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetNonEffectivereason(String t, boolean a) {
-        viewBindings.reasonTxt.setText(t);
-        isNoneffect= a;
-        if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
-                && isLeaveTypeDone && isPrescType && isNoneffect &&
-                isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
-            typeDone=true;
-            viewBindings.typeAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.reasonTxt.setText(t);
+            isNoneffect= a;
+            if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
+                    && isLeaveTypeDone && isPrescType && isNoneffect &&
+                    isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
+                typeDone=true;
+                viewBindings.typeAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetTransportList(String t, boolean a) {
-        viewBindings.transportTxt.setText(t);
-        isTransport= a;
-        if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
-                && isLeaveTypeDone && isPrescType && isNoneffect &&
-                isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
-            typeDone=true;
-            viewBindings.typeAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.transportTxt.setText(t);
+            isTransport= a;
+            if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
+                    && isLeaveTypeDone && isPrescType && isNoneffect &&
+                    isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
+                typeDone=true;
+                viewBindings.typeAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetTourPurpose(String t, boolean a) {
-        viewBindings.tourPurposeTxt.setText(t);
-        isTourPurpose= a;
-        if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
-                && isLeaveTypeDone && isPrescType && isNoneffect &&
-                isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
-            typeDone=true;
-            viewBindings.typeAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.tourPurposeTxt.setText(t);
+            isTourPurpose= a;
+            if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
+                    && isLeaveTypeDone && isPrescType && isNoneffect &&
+                    isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
+                typeDone=true;
+                viewBindings.typeAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetVisitType(String t, boolean a) {
-        viewBindings.visittypeTxt.setText(t);
-        isVisitTypeDone= a;
-        if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
-                && isLeaveTypeDone && isPrescType && isNoneffect &&
-                isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
-            typeDone=true;
-            viewBindings.typeAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.visittypeTxt.setText(t);
+            isVisitTypeDone= a;
+            if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
+                    && isLeaveTypeDone && isPrescType && isNoneffect &&
+                    isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
+                typeDone=true;
+                viewBindings.typeAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetProviderType(String t, boolean a) {
-        viewBindings.progtypeTxt.setText(t);
-        isProviderType= a;
-        if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
-                && isLeaveTypeDone && isPrescType && isNoneffect &&
-                isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
-            typeDone=true;
-            viewBindings.typeAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            viewBindings.progtypeTxt.setText(t);
+            isProviderType= a;
+            if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
+                    && isLeaveTypeDone && isPrescType && isNoneffect &&
+                    isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
+                typeDone=true;
+                viewBindings.typeAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(a);
     }
 
     @Override
     public void onGetSMCType(String a, boolean t) {
-        //viewBindings.progtypeTxt.setText(t);
-        isSMCType= t;
-        if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
-                && isLeaveTypeDone && isPrescType && isNoneffect &&
-                isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
-            typeDone=true;
-            viewBindings.typeAlldoneTxt.setText("----Complete");
-            hitMain();
-        }
+        runSafely(() -> {
+            //viewBindings.progtypeTxt.setText(t);
+            isSMCType= t;
+            if (isDoctorTypeDone && isCustTypeDone && isDocConType && isExpenseTypeDone
+                    && isLeaveTypeDone && isPrescType && isNoneffect &&
+                    isTransport && isTourPurpose && isVisitTypeDone && isProviderType && isSMCType) {
+                typeDone=true;
+                viewBindings.typeAlldoneTxt.setText("----Complete");
+            }
+        });
+        handleStepResult(t);
     }
 }

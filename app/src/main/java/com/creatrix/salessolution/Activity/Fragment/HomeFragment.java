@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import com.creatrix.salessolution.Activity.Attendance.AttendanceActivity;
 import com.creatrix.salessolution.Activity.CampainActivity;
 import com.creatrix.salessolution.Activity.Customer.CustomerActivity;
+import com.creatrix.salessolution.Activity.Customer.CustomerEditListActivity;
 import com.creatrix.salessolution.Activity.Customer.CustomerListActivity;
 import com.creatrix.salessolution.Activity.DA.TADAClaimActivity;
 import com.creatrix.salessolution.Activity.DWSP.DWSPActivity;
@@ -381,6 +382,16 @@ public class HomeFragment extends Fragment implements IProduct.View, IMioDashboa
                 SnackBarManagement._warning_CustomMessage(viewBinding.masterLayout, "No Internet Connectivity");
             }
         });
+        viewBinding.dashboardCustomerCardEdit.setOnClickListener(v -> {
+            if (NetworkInformation.isConnected(requireActivity())) {
+                Constants.WHO = "HomeToCustomerEdit";
+
+                Intent i = new Intent(requireActivity(), CustomerEditListActivity.class);
+                i.putExtra("OrderType", "HomeToCustomerEdit");
+                startActivity(i);
+                requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+        });
         viewBinding.prescription.setOnClickListener(v -> {
             Intent i = new Intent(requireActivity(), AddPrescriptionActivity.class);
             startActivity(i);
@@ -554,7 +565,7 @@ public class HomeFragment extends Fragment implements IProduct.View, IMioDashboa
         alertDialogBuilder.setMessage("An update is required to use the application.\n\nPlease download and update the app first. \nIf You don't get any apk file please contact Admin People");
         alertDialogBuilder.setPositiveButton("Go to Download Page",
                 (arg0, arg1) -> {
-                    String url = "http://13.76.141.111:456/";
+                    String url = "http://103.244.247.179:181/";
                     Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(Uri.parse(url));
                     startActivity(i);

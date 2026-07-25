@@ -256,7 +256,7 @@
                     android:paddingLeft="10dp"
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp"
-                    android:visibility="gone"
+
 
                     >
 

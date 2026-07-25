@@ -12,9 +12,9 @@ public class RetrofitClientOrderProcessInstance {
     private static Retrofit retrofit = null;
     public static Retrofit getRetrofitInstance() {
         OkHttpClient clientz =new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.MINUTES)
-                .writeTimeout(10,TimeUnit.MINUTES)
-                .readTimeout(10,TimeUnit.MINUTES)
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .writeTimeout(20,TimeUnit.SECONDS)
+                .readTimeout(20,TimeUnit.SECONDS)
                 .build();
 
         if (retrofit == null) {

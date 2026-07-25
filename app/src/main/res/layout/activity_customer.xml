@@ -39,6 +39,46 @@
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
 
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/white"
+            android:elevation="10dp"
+            android:padding="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Select Provider Info"
+                    android:textColor="@color/main"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/changeptype"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/main"
+                    android:padding="6dp"
+                    android:text="Select"
+                    app:backgroundTint="@color/main"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="10dp"
+                    android:textColor="@color/white"/>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -148,48 +188,40 @@
                 android:orientation="vertical"
                 android:padding="10sp">
 
+                <!-- Horizontal LinearLayout for two columns -->
                 <LinearLayout
-                    android:id="@+id/ptypeLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <!-- First Column (Provider Type) -->
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/program_type"
-                        android:textColor="@color/main" />
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/changeptype"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@color/main"
-                        android:padding="4dp"
-                        android:text="@string/change"
-                        android:textColor="@color/white"
-                        android:visibility="gone" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Provider Type"
+                            android:textColor="@color/main"
+                            android:textSize="16sp" />
+
+                        <Spinner
+                            android:id="@+id/ptypeSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:entries="@array/demodata" />
+                    </LinearLayout>
+
+                    <!-- Second Column (Select Code) -->
+
                 </LinearLayout>
 
-                <!--         <TextView
-                             android:id="@+id/edittype"
-                             android:layout_width="wrap_content"
-                             android:layout_height="wrap_content"
-                             android:layout_below="@+id/ptypeLabel"
-                             android:textColor="@color/black"
-                             android:visibility="gone" />-->
-
-                <Spinner
-                    android:id="@+id/ptypeSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/ptypeLabel"
-                    android:entries="@array/demodata">
-
-
-                </Spinner>
             </RelativeLayout>
+
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -5,6 +5,16 @@ import java.util.Date;
 public class Customer {
     public int CustomerMasterId;
     public String CustomerCode ;
+    public String CustomerBsPCode ;
+
+    public String getCustomerBsPCode() {
+        return CustomerBsPCode;
+    }
+
+    public void setCustomerBsPCode(String customerBsPCode) {
+        CustomerBsPCode = customerBsPCode;
+    }
+
     public int CategoryId ;
     public String CustomerName ;
     public String Address ;
@@ -52,6 +62,16 @@ public class Customer {
     public String InActiveDate ;
 
     public String CustomerStation ;
+
+    public String getCustomerBsPTag() {
+        return CustomerBsPTag;
+    }
+
+    public void setCustomerBsPTag(String customerBsPTag) {
+        CustomerBsPTag = customerBsPTag;
+    }
+
+    public String CustomerBsPTag ;
 
     public String Division ;
 

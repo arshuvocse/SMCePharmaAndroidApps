@@ -1,5 +1,6 @@
 package com.creatrix.salessolution.Activity.Doctor.VisitPlan;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -65,7 +66,7 @@ public class VisitPlanDetailsActivity extends AppCompatActivity implements Chked
 
     RecyclerView rv_doctors;
     EditText srchview;
-    TextView done_doc, cancel_doc;
+    TextView done_doc, cancel_doc, label_info;
     ImageView cleare;
     DoctorItemChkAdapter itemChkAdapter;
     VisitplanModel vp;
@@ -93,7 +94,7 @@ public class VisitPlanDetailsActivity extends AppCompatActivity implements Chked
 
         dbCrudHelper = new DBCrudHelper(VisitPlanDetailsActivity.this);
         dbDoctorHelper = new DBDoctorHelper(VisitPlanDetailsActivity.this);
-        docList = dbDoctorHelper.getDoctorListFromSQLite();
+        docList = dbDoctorHelper.getCustDoctorListFromSQLite("Doc");
 
 
         String month = getIntent().getStringExtra("Month");
@@ -144,9 +145,37 @@ public class VisitPlanDetailsActivity extends AppCompatActivity implements Chked
             }
 
         });
-        popup_Doctor();
+
+
         binding.fabAdd.setOnClickListener(v -> {
-            popupDoctor.show();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this); // or getContext() for fragment
+            builder.setTitle("Select Type");
+            String[] options = {"Doctor", "Customer"};
+
+            builder.setItems(options, (dialog, which) -> {
+                if (which == 0) {
+                    // Doctor selected
+                    Toast.makeText(this, "Doctor selected", Toast.LENGTH_SHORT).show();
+
+                    docList = dbDoctorHelper.getCustDoctorListFromSQLite("Doc");
+                    popup_Doctor("Doc");
+                    popupDoctor.show();
+                    // TODO: Navigate to Doctor form or perform action
+                } else if (which == 1) {
+                    // Customer selected
+                    Toast.makeText(this, "Customer selected", Toast.LENGTH_SHORT).show();
+
+                    docList = dbDoctorHelper.getCustDoctorListFromSQLite("Cust");
+                    popup_Doctor("Cust");
+                    popupDoctor.show();
+                    // TODO: Navigate to Customer form or perform action
+                }
+            });
+
+            builder.show();
+
+
         });
     }
     @Override
@@ -154,9 +183,9 @@ public class VisitPlanDetailsActivity extends AppCompatActivity implements Chked
 
     }
 
-    public void popup_Doctor() {
+    public void popup_Doctor(String Dtype) {
         popupDoctor = new Dialog(VisitPlanDetailsActivity.this);
-        popupDoctor.setContentView(R.layout.common_dialog);
+        popupDoctor.setContentView(R.layout.custdoc_dialog);
         popupDoctor.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         popupDoctor.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT, Toolbar.LayoutParams.MATCH_PARENT);
         popupDoctor.getWindow().getAttributes().gravity = Gravity.CENTER;
@@ -166,6 +195,14 @@ public class VisitPlanDetailsActivity extends AppCompatActivity implements Chked
         srchview = popupDoctor.findViewById(R.id.srchview);
         done_doc = popupDoctor.findViewById(R.id.btn_done);
         cancel_doc = popupDoctor.findViewById(R.id.btn_cancel);
+        label_info = popupDoctor.findViewById(R.id.ff);
+
+        if (Dtype=="Doc"){
+            label_info.setText("Select Doctor");
+        }
+        else {
+            label_info.setText("Select Customer");
+        }
        /* cleare = popupDoctor.findViewById(R.id.cleare);
         cleare.setOnClickListener(v -> {
             try {

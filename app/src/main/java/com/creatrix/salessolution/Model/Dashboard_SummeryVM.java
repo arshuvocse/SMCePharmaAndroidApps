@@ -8,7 +8,17 @@ public class Dashboard_SummeryVM {
     String OrderTodayAmt;
     String ProductTotalOrder;
     String TotalDcr;
+    String totalvsp;
     String TotalPrescription;
+
+    public String getTotalvsp() {
+        return totalvsp;
+    }
+
+    public void setTotalvsp(String totalvsp) {
+        this.totalvsp = totalvsp;
+    }
+
     String Colection;
     String BonusGift;
 

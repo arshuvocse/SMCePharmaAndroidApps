@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -128,8 +129,13 @@ public class TeamDAListActivity extends AppCompatActivity implements IDATeam.Vie
                     params = "AND View_Webapi_EmployeeFieldForceInfo" + tagA + Areaid;
                     break;
                 case "DZSM":
-                    Regionid = String.valueOf(dbCrudHelper.getCurrentUserRegionId_SQLite());
-                    params = "AND View_Webapi_EmployeeFieldForceInfo" + tagR + Regionid;
+                    Regionid = dbCrudHelper.getCurrentUserRegionIds_SQLite(String.valueOf(empid));
+//                    if (!TextUtils.isEmpty(Regionid) && Regionid.contains(",")) {
+//                        params = "AND View_Webapi_EmployeeFieldForceInfo.EmpRegionId in (" + Regionid + ")";
+//                    } else
+                    {
+                        params = "AND View_Webapi_EmployeeFieldForceInfo" + tagR + Regionid;
+                    }
                     break;
                 case "NSM":
                     Groupid = String.valueOf(dbCrudHelper.getCurrentUserGroupId_SQLite());
@@ -479,15 +485,20 @@ public class TeamDAListActivity extends AppCompatActivity implements IDATeam.Vie
 
     @Override
     public void onTeamDAList(List<DAListData> aList) {
-        pd.dismiss();
-        daAdapter = new DA_ApprovList_Adapter(aList,this,this,RoleTypeId);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        binding.rvDa.setLayoutManager(mLayoutManager);
-        binding.rvDa.setItemAnimator(new DefaultItemAnimator());
-        binding.rvDa.setAdapter(daAdapter);
-        binding.rvDa.setItemAnimator(null);
-        binding.rvDa.scrollToPosition(0);
-        daAdapter.notifyDataSetChanged();
+        try{
+            pd.dismiss();
+            daAdapter = new DA_ApprovList_Adapter(aList,this,this,RoleTypeId);
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+            binding.rvDa.setLayoutManager(mLayoutManager);
+            binding.rvDa.setItemAnimator(new DefaultItemAnimator());
+            binding.rvDa.setAdapter(daAdapter);
+            binding.rvDa.setItemAnimator(null);
+            binding.rvDa.scrollToPosition(0);
+            daAdapter.notifyDataSetChanged();
+        }
+        catch (Exception ex){
+
+        }
 
     }
 

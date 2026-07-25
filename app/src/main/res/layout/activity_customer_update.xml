@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/masterLayoutId"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context=".Activity.Customer.CustomerUpdateActivity">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_custom"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/main"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:theme="@style/ToolbarTheme"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:fontFamily="@font/lato_bold"
+                android:text="@string/editcustomer"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- SCROLLABLE TOP CONTENT -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/topScrollArea"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_custom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/headerRow">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Customer Information (single card) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardCustomerInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp"
+                android:contentDescription="Customer information card">
+
+                <LinearLayout
+                    android:id="@+id/toll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingEnd="10dp">
+
+                    <ImageView
+                        android:id="@+id/profile_image"
+                        android:layout_gravity="center"
+                        android:layout_width="45dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="5dp"
+                        android:src="@drawable/ic_customer"
+                        android:contentDescription="Customer avatar" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/customerName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/lato"
+                            android:text="Customer Name"
+                            android:textColor="@color/main"
+                            android:textSize="18sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Code: "
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/customer_code_txt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="C41210397"
+                                android:textColor="@color/textGrey"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Mobile No.: "
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/custmoblie"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="C41210397"
+                                android:textColor="@color/textGrey"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Market: "
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/custmarket"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="C41210397"
+                                android:textColor="@color/textGrey"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Address: "
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/customer_adress_txt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Dhanmondi, Dhaka"
+                                android:textColor="@color/textGrey"
+                                android:textSize="10sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Top dropdowns -->
+            <LinearLayout
+                android:id="@+id/llFilters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="8dp">
+
+                <!-- Division + District in same row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="8dp">
+
+                    <!-- Division -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Divi:"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/black"
+                        android:layout_marginEnd="8dp"/>
+
+                    <Spinner
+                        android:id="@+id/spDivision"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/spinner_background"
+                        android:contentDescription="Select division"/>
+
+
+
+                    <!-- District -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="  Dist:"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/black"
+                        android:layout_marginEnd="8dp"/>
+
+                    <Spinner
+                        android:id="@+id/spDistrict"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/spinner_background"
+                        android:contentDescription="Select district"/>
+                </LinearLayout>
+
+                <!-- Upazila row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Upazila:"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/black"
+                        android:layout_marginEnd="12dp"/>
+
+                    <Spinner
+                        android:id="@+id/spThana"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/spinner_background"
+                        android:contentDescription="Select upazila"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Header row (kept outside to avoid nested scrolling with ListView) -->
+    <LinearLayout
+        android:id="@+id/headerRow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp"
+        android:paddingHorizontal="16dp"
+        android:background="#E5E7EB"
+        android:contentDescription="People list header"
+        app:layout_constraintTop_toBottomOf="@id/topScrollArea"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- First blank column (for checkbox/icon); decorative only -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text=" "
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Name"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Address"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Mobile"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Upazila"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- ListView fills space between header & actions -->
+    <ListView
+        android:id="@+id/lvPeople"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="1dp"
+        android:contentDescription="People list"
+        app:layout_constraintTop_toBottomOf="@id/headerRow"
+        app:layout_constraintBottom_toTopOf="@id/actionsContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Actions -->
+    <LinearLayout
+        android:id="@+id/actionsContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="5dp"
+        android:contentDescription="Actions"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUpdate"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:fontFamily="@font/lato_bold"
+            android:textSize="20sp"
+            android:text="Update"
+            android:layout_marginStart="12dp"
+            android:contentDescription="Confirm selection" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -74,7 +74,7 @@ public class VisitPlanPresenter implements IVisitPlan.Presenter {
         try {
             ApiDoctorCall service = RetrofitClientInstance.getRetrofitInstance().create(ApiDoctorCall.class);
             Call<ResultInfo> call = service.SaveDoctorVisitPlan(vpl);
-          //  Toast.makeText(context, "post : "+vpl, Toast.LENGTH_SHORT).show();
+           //Toast.makeText(context, "post : "+vpl, Toast.LENGTH_SHORT).show();
             HttpUrl ds = call.request().url();
             call.enqueue(new Callback<ResultInfo>() {
                 @Override

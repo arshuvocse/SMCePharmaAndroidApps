@@ -7,8 +7,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClientInstanceTracking {
-//    private static final String BASE_URL = "http://13.76.141.111:164";
-    private static final String BASE_URL = "http://103.198.137.179:983";
+    private static final String BASE_URL = "http://103.244.247.179:202";
+//    private static final String BASE_URL = "http://103.198.137.179:983";
     private static Retrofit retrofit = null;
     /*   OkHttpClient client= new OkHttpClient()
                .writeTimeoutMillis(TimeUnit.MINUTES)*/

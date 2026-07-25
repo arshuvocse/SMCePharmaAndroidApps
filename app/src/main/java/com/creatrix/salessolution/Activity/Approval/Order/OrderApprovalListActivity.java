@@ -113,7 +113,7 @@ ActivityOrderApprovalBinding binding;
                     params = "AND View_Webapi_EmployeeFieldForceInfo" + tagA + Areaid;
                     break;
                 case "DZSM":
-                    Regionid = String.valueOf(dbCrudHelper.getCurrentUserRegionId_SQLite());
+                    Regionid = String.valueOf(dbCrudHelper.getCurrentUserRegionId_SQLite(String.valueOf(empid)));
                     params = "AND View_Webapi_EmployeeFieldForceInfo" + tagR + Regionid;
                     break;
                 case "NSM":

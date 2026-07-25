@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.UnderlineSpan;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.creatrix.salessolution.Activity.Customer.CustomerUpdateActivity;
 import com.creatrix.salessolution.Activity.OrderMainActivity;
 import com.creatrix.salessolution.Activity.OrderProcess.SampleOrderActivity;
 import com.creatrix.salessolution.Model.Customer;
@@ -74,6 +76,21 @@ public class _customerList_RecyclerAdapter extends RecyclerView.Adapter<_custome
             holder.custtypelay.setVisibility(View.VISIBLE);
             holder.customer_type_txt.setText(aCustomerList.get(position).getCustomerType());
         }
+
+        if (orderTYpe.equals("HomeToCustomerEdit")) {
+            String bspCode = aCustomerList.get(position).getCustomerBsPCode();
+            holder.llinvoice.setVisibility(View.GONE);
+            if (!TextUtils.isEmpty(bspCode)) {
+                holder.llbspcode.setVisibility(View.VISIBLE);
+                holder.txtBspCode.setText(bspCode);
+            } else {
+                holder.llbspcode.setVisibility(View.GONE);
+            }
+        } else {
+            holder.llbspcode.setVisibility(View.GONE);
+        }
+
+
         SpannableString content = new SpannableString(aCustomerList.get(position).getCellNo());
         content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
         holder.customerMobile.setText(content);
@@ -103,7 +120,22 @@ public class _customerList_RecyclerAdapter extends RecyclerView.Adapter<_custome
                 pair[0] = new Pair<View,String>(holder.profile_image,"imagetrans");
                 pair[1] = new Pair<View,String>(holder.customerName,"titletrans");
 
-                if(orderTYpe.equals("Sample")){
+                if(orderTYpe.equals("HomeToCustomerEdit")){
+                    Intent intent = new Intent(context, CustomerUpdateActivity.class);
+                    Gson gson = new Gson();
+                    String myJson = gson.toJson(sCustomer);
+                    intent.putExtra("myjson", myJson);
+                    intent.putExtra("OrderType", orderTYpe);
+
+                   // Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        ActivityOptions activityOptions =  ActivityOptions.makeSceneTransitionAnimation((Activity) context,pair);
+                        context.startActivity(intent,activityOptions.toBundle());
+                    }else{
+                        context.startActivity(intent);
+                    }
+                }
+             else   if(orderTYpe.equals("Sample")){
                     Intent intent = new Intent(context, SampleOrderActivity.class);
                     Gson gson = new Gson();
                     String myJson = gson.toJson(sCustomer);
@@ -158,9 +190,10 @@ public class _customerList_RecyclerAdapter extends RecyclerView.Adapter<_custome
         public TextView customer_adress_txt;
         public TextView customer_market_txt,customer_marketcode_txt;
         public TextView customer_type_txt;
+        public TextView txtBspCode;
         public ImageView profile_image;
         public TextView customer_subgroup_txt;
-        LinearLayout custtypelay,llmobile;
+        LinearLayout custtypelay,llmobile,llbspcode,llinvoice;
 
 
 
@@ -176,9 +209,12 @@ public class _customerList_RecyclerAdapter extends RecyclerView.Adapter<_custome
             customer_code_txt = (TextView) view.findViewById(R.id.customer_code_txt);
             customer_adress_txt = (TextView) view.findViewById(R.id.customer_adress_txt);
             customer_market_txt = (TextView) view.findViewById(R.id.customer_market_txt);
+            txtBspCode = (TextView) view.findViewById(R.id.txtBspCode);
             customer_marketcode_txt = (TextView) view.findViewById(R.id.customer_marketcode_txt);
             customer_type_txt = (TextView) view.findViewById(R.id.customer_type_txt);
             llmobile = (LinearLayout) view.findViewById(R.id.llmobile);
+            llbspcode = (LinearLayout) view.findViewById(R.id.llbspcode);
+            llinvoice = (LinearLayout) view.findViewById(R.id.llinvoice);
             custtypelay = (LinearLayout) view.findViewById(R.id.custtypelay);
 //            customer_subgroup_txt = (TextView) view.findViewById(R.id.customer_subgroup_txt);
             clickID = (LinearLayout) view.findViewById(R.id.clickID);

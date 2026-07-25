@@ -322,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements LoginInterface.Vi
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        String url = "http://13.76.141.111:456/";
+                        String url = "http://103.244.247.179:181/";
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(url));
                         startActivity(i);

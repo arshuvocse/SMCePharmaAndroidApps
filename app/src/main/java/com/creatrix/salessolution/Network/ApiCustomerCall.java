@@ -9,6 +9,7 @@ import com.creatrix.salessolution.Activity.Customer.CustomerSvModel;
 import com.creatrix.salessolution.Activity.Customer.Pending.CustomerARModel;
 import com.creatrix.salessolution.Activity.Doctor.Pending.DoctorARModel;
 import com.creatrix.salessolution.Activity.Doctor.UpdateDocMarket;
+import com.creatrix.salessolution.Activity.PersonInfoDAO;
 import com.creatrix.salessolution.Model.Customer;
 import com.creatrix.salessolution.Model.EmpTotalCountModel;
 import com.creatrix.salessolution.Model.ResultInfo;
@@ -32,12 +33,22 @@ public interface ApiCustomerCall {
     @Headers({"Accept: application/json"})
     @GET("/api/Customer")
     Call<List<Customer>> GetCustomerByUser(@Query("empId") int empId);
+    @GET("/api/Customer/GetCustomerByUserByMobileNo")
+    Call<Customer> GetCustomerByUserByMobileNo(@Query("empId") int empId, @Query("CellNo") String CellNo);
 
     @POST("/api/Customer/SaveCustomer")
     Call<ResultInfo> SaveCustomer(@Body CustomerSvModel aInfo);
 
+    @POST("/api/Customer/UpdateCustomerBSP")
+    Call<ResultInfo> UpdateCustomerBSP(@Body CustomerSvModel aInfo);
+
     @GET("/api/Reports/GetEmployeeWiseTotalCount")
     Call<EmpTotalCountModel> GetEmployeeWiseTotalCount(@Query("empId") String empId, @Query("Date")   String Date);
+    @GET("/api/Customer/GetPersonByDivisionDistrict")
+  Call<List<PersonInfoDAO>> GetPersonByDivisionDistrict(@Query("DivisionId") int DivisionId, @Query("DistrictId")   int DistrictId, @Query("ThanaId")   int ThanaId, @Query("FromWhom")   String FromWhom);
+    @Headers({"Accept: text/plain"})
+    @GET("/api/IntrigrationAPI/GetProviderInfoIntrigration")
+    Call<List<PersonInfoDAO>> GetProviderInfoIntrigration(@Query("upazila") String upazila, @Query("userId") String userId, @Query("pass") String pass);
     //Approve/reject
     @GET("/api/Reports/GetCustomerPendingRejectList")
     Call<List<CustomerARModel>> GetCustomerApproveRejList(@Query("empId") int empId,@Query("ApprovalStatus") String status);

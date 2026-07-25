@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.creatrix.salessolution.Activity.Doctor.DCR.NonEffectiveReason;
 import com.creatrix.salessolution.DBInfo.DBHelperMain;
+import com.creatrix.salessolution.Model.DistrictVM;
+import com.creatrix.salessolution.Model.DivisionVM;
 import com.creatrix.salessolution.Model.Doctor.ContactTypeVM;
 import com.creatrix.salessolution.Model.Customer;
 import com.creatrix.salessolution.Model.CustomerType;
@@ -43,6 +45,7 @@ import com.creatrix.salessolution.Model.PrescriptionTYpe;
 import com.creatrix.salessolution.Model.Product;
 import com.creatrix.salessolution.Model.ProductSample;
 import com.creatrix.salessolution.Model.StationType;
+import com.creatrix.salessolution.Model.ThanaVM;
 import com.creatrix.salessolution.Model.TourPurposeViewModel;
 import com.creatrix.salessolution.Model.TourTypeViewModel;
 import com.creatrix.salessolution.Model.Transport;
@@ -60,20 +63,28 @@ public class SyncDb_Helper {
         dbHelperMain = new DBHelperMain(context);
     }
 
-/*    //Area section Insert
+  //Area section Insert
     public boolean InsertDivision(List<DivisionVM> aList) {
         boolean isTrue = true;
         try {
             String tableName = "tblDivisionInfo";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 DivisionVM aInfo = aList.get(i);
-                String insertQuery = "Insert into tblDivisionInfo(DivisionId,DivisionName) " +
-                        "values('" + aInfo.getDivisionId() + "','" + aInfo.getDivisionName() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("DivisionId", aInfo.getDivisionId());
+values.put("DivisionName", aInfo.getDivisionName());
+database.insert("tblDivisionInfo", null, values);
             }
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
 
             Log.e("DBEX", exception.toString());
@@ -87,15 +98,23 @@ public class SyncDb_Helper {
             String tableName = "tblDistrictInfo";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 DistrictVM aInfo = aList.get(i);
-                // String insertQuery = "Insert into tblDistrictInfo(DistrictId,DistrictName,DivisionId) " +
-                String insertQuery = "Insert into tblDistrictInfo(DistrictId,DistrictName,DivisionId) " +
-                        //"values('" + aInfo.getDistrictId() + "','" + aInfo.getDistrictName() + "','" + aInfo.getDivisionId() + "')";
-                        "values('" + aInfo.getDistrictId() + "','" + aInfo.getDistrictName() + "','" + aInfo.getDivisionId() + "')";
-                database.execSQL(insertQuery);
-                database.close();
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("DistrictId", aInfo.getDistrictId());
+values.put("DistrictName", aInfo.getDistrictName());
+values.put("DivisionId", aInfo.getDivisionId());
+database.insert("tblDistrictInfo", null, values);
+                // << database.close(); এখানে নয় >>
             }
+            
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }database.close(); // লুপের বাইরে, সব শেষ হলে ক্লোজ করুন
         } catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
@@ -103,25 +122,35 @@ public class SyncDb_Helper {
         return isTrue;
     }
 
+
     public boolean InsertThana(List<ThanaVM> aList) {
         boolean isTrue = true;
         try {
             String tableName = "tblThanaInfo";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 ThanaVM aInfo = aList.get(i);
-                String insertQuery = "Insert into tblThanaInfo(ThanaId,ThanaName,district_id) " +
-                        "values('" + aInfo.getThanaId() + "','" + aInfo.getThanaName() + "','" + aInfo.getDistrict_id() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ThanaId", aInfo.getThanaId());
+values.put("ThanaName", aInfo.getThanaName());
+values.put("district_id", aInfo.getDistrict_id());
+database.insert("tblThanaInfo", null, values);
             }
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
 
             Log.e("DBEX", exception.toString());
         }
         return isTrue;
-    }*/
+    }
 
     //TODO:Area
     /*public boolean InsertArea(List<Area> aList){
@@ -149,47 +178,65 @@ public class SyncDb_Helper {
         return isTrue;
     }*/
     //TODO:Insert Master DATA
+
+    public void deleteAllFromTable(String tableName, SQLiteDatabase database) {
+        try {
+            String query = "DELETE FROM '" + tableName + "';";
+            database.execSQL(query);
+        } catch (Exception ex) {
+            Log.e("recordDelError", ex.toString());
+        }
+    }
+
+    public void deleteAllMasterTables() {
+        SQLiteDatabase database = dbHelperMain.getWritableDatabase();
+        database.beginTransaction();
+
+        try {
+            deleteAllFromTable("tbl_Group", database);
+            deleteAllFromTable("tblRegion", database);
+            deleteAllFromTable("tblArea", database);
+            deleteAllFromTable("tblTerritory", database);
+            deleteAllFromTable("tblSubTerritory", database);
+            deleteAllFromTable("tblMarket", database);
+            deleteAllFromTable("tblNSMInfo", database);
+            deleteAllFromTable("tblRSMInfo", database);
+            deleteAllFromTable("tblASMInfo", database);
+            deleteAllFromTable("tblMIOInfo", database);
+
+            database.setTransactionSuccessful();
+        } catch (Exception ex) {
+            Log.e("deleteAllError", ex.toString());
+        } finally {
+            database.endTransaction();
+            database.close();
+        }
+    }
+
     public boolean InsertGroup(List<Group> gList) {
         boolean isTrue = false;
         String tableName = "tbl_Group";
         SQLiteDatabase database = dbHelperMain.getWritableDatabase();
         database.beginTransaction();
         try {
-            String query = "delete from '" + tableName + "';";
-            database.execSQL(query);
-        } catch (Exception ex) {
-            Log.e("recordDelError", ex.toString());
-        }
-        for (Group m : gList) {
-            ContentValues cv = new ContentValues();
-            cv.put("GroupId", m.getGroupId());
-            cv.put("GroupName", m.getGroupName().replace("'", "''"));
-            database.insert(tableName, null, cv);
-            isTrue =true;
-        }
-        isTrue = true;
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
-      /*  try {
-
-            String tableName = "tbl_Group";
-            _deleteAllRecordsFromaTable(tableName);
-            SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < gList.size(); i++) {
-                Group gInfo = gList.get(i);
-                String insertQuery = "Insert into tbl_Group(GroupId,GroupName) " +
-                        //"values('" + gInfo.getGroupId() + "','" + gInfo.getGroupName() + "')";
-                        "values('" + gInfo.getGroupId() + "','" + gInfo.getGroupName().replace("'", "''") + "')";
-
-                database.execSQL(insertQuery);
+            for (Group m : gList) {
+                try {
+                    ContentValues cv = new ContentValues();
+                    cv.put("GroupId", m.getGroupId());
+                    cv.put("GroupName", m.getGroupName() != null ? m.getGroupName().replace("'", "''") : "");
+                    database.insert(tableName, null, cv);
+                } catch (Exception rowEx) {
+                    Log.e("DBEX", rowEx.toString());
+                }
             }
-
-        } catch (Exception exception) {
-            //  isTrue = false;
-            Log.e("DBEX", exception.toString());
-
-        }*/
+            isTrue = true;
+            database.setTransactionSuccessful();
+        } catch (Exception ex) {
+            Log.e("DBEX", ex.toString());
+        } finally {
+            database.endTransaction();
+            database.close();
+        }
         return isTrue;
     }
 
@@ -199,23 +246,25 @@ public class SyncDb_Helper {
         SQLiteDatabase database = dbHelperMain.getWritableDatabase();
         database.beginTransaction();
         try {
-            String query = "delete from '" + tableName + "';";
-            database.execSQL(query);
+            for (Region m : rList) {
+                try {
+                    ContentValues cv = new ContentValues();
+                    cv.put("RegionId", m.getRegionId());
+                    cv.put("RegionName", m.getRegionName() != null ? m.getRegionName().replace("'", "''") : "");
+                    cv.put("GroupId", m.getGroupId());
+                    database.insert(tableName, null, cv);
+                } catch (Exception rowEx) {
+                    Log.e("DBEX", rowEx.toString());
+                }
+            }
+            isTrue = true;
+            database.setTransactionSuccessful();
         } catch (Exception ex) {
-            Log.e("recordDelError", ex.toString());
+            Log.e("DBEX", ex.toString());
+        } finally {
+            database.endTransaction();
+            database.close();
         }
-        for (Region m : rList) {
-            ContentValues cv = new ContentValues();
-            cv.put("RegionId", m.getRegionId());
-            cv.put("RegionName", m.getRegionName().replace("'", "''"));
-            cv.put("GroupId", m.getGroupId());
-            database.insert(tableName, null, cv);
-        }
-        isTrue = true;
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
-
         return isTrue;
     }
 
@@ -225,40 +274,25 @@ public class SyncDb_Helper {
         SQLiteDatabase database = dbHelperMain.getWritableDatabase();
         database.beginTransaction();
         try {
-            String query = "delete from '" + tableName + "';";
-            database.execSQL(query);
-        } catch (Exception ex) {
-            Log.e("recordDelError", ex.toString());
-        }
-        for (Area m : arList) {
-            ContentValues cv = new ContentValues();
-            cv.put("AreaId", m.getAreaId());
-            cv.put("AreaName", m.getAreaName().replace("'", "''"));
-            cv.put("RegionId", m.getRegionId());
-            database.insert(tableName, null, cv);
-        }
-        isTrue = true;
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
-       /* try {
-
-            String tableName = "tblArea";
-            _deleteAllRecordsFromaTable(tableName);
-            SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < arList.size(); i++) {
-                Area aInfo = arList.get(i);
-                String insertQuery = "Insert into tblArea(AreaId,AreaName,RegionId) " +
-                        // "values('" + aInfo.getAreaId() + "','" + aInfo.getAreaName() + "','" + aInfo.getRegionId() + "')";
-                        "values('" + aInfo.getAreaId() + "','" + aInfo.getAreaName().replace("'", "''") + "','" + aInfo.getRegionId() + "')";
-                database.execSQL(insertQuery);
+            for (Area m : arList) {
+                try {
+                    ContentValues cv = new ContentValues();
+                    cv.put("AreaId", m.getAreaId());
+                    cv.put("AreaName", m.getAreaName() != null ? m.getAreaName().replace("'", "''") : "");
+                    cv.put("RegionId", m.getRegionId());
+                    database.insert(tableName, null, cv);
+                } catch (Exception rowEx) {
+                    Log.e("DBEX", rowEx.toString());
+                }
             }
-
-        } catch (Exception exception) {
-            // isTrue = false;
-            Log.e("DBEX", exception.toString());
-
-        }*/
+            isTrue = true;
+            database.setTransactionSuccessful();
+        } catch (Exception ex) {
+            Log.e("DBEX", ex.toString());
+        } finally {
+            database.endTransaction();
+            database.close();
+        }
         return isTrue;
     }
 
@@ -268,41 +302,25 @@ public class SyncDb_Helper {
         SQLiteDatabase database = dbHelperMain.getWritableDatabase();
         database.beginTransaction();
         try {
-            String query = "delete from '" + tableName + "';";
-            database.execSQL(query);
-        } catch (Exception ex) {
-            Log.e("recordDelError", ex.toString());
-        }
-        for (Teritorry m : tList) {
-            ContentValues cv = new ContentValues();
-            cv.put("TerritoryId", m.getTerritoryId());
-            cv.put("TerritoryName", m.getTerritoryName().replace("'", "''"));
-            cv.put("AreaId", m.getAreaId());
-            database.insert(tableName, null, cv);
-        }
-        isTrue= true;
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
-
-        /*try {
-
-            String tableName = "tblTerritory";
-            _deleteAllRecordsFromaTable(tableName);
-            SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < tList.size(); i++) {
-                Teritorry tInfo = tList.get(i);
-                String insertQuery = "Insert into tblTerritory(TerritoryId,TerritoryName,AreaId) " +
-                        //  "values('" + tInfo.getTerritoryId() + "','" + tInfo.getTerritoryName() + "','" + tInfo.getAreaId() + "')";
-                        "values('" + tInfo.getTerritoryId() + "','" + tInfo.getTerritoryName().replace("'", "''") + "','" + tInfo.getAreaId() + "')";
-                database.execSQL(insertQuery);
+            for (Teritorry m : tList) {
+                try {
+                    ContentValues cv = new ContentValues();
+                    cv.put("TerritoryId", m.getTerritoryId());
+                    cv.put("TerritoryName", m.getTerritoryName() != null ? m.getTerritoryName().replace("'", "''") : "");
+                    cv.put("AreaId", m.getAreaId());
+                    database.insert(tableName, null, cv);
+                } catch (Exception rowEx) {
+                    Log.e("DBEX", rowEx.toString());
+                }
             }
-
-        } catch (Exception exception) {
-            // isTrue = false;
-            Log.e("DBEX", exception.toString());
-
-        }*/
+            isTrue = true;
+            database.setTransactionSuccessful();
+        } catch (Exception ex) {
+            Log.e("DBEX", ex.toString());
+        } finally {
+            database.endTransaction();
+            database.close();
+        }
         return isTrue;
     }
 
@@ -312,39 +330,25 @@ public class SyncDb_Helper {
         SQLiteDatabase database = dbHelperMain.getWritableDatabase();
         database.beginTransaction();
         try {
-            String query = "delete from '" + tableName + "';";
-            database.execSQL(query);
-        } catch (Exception ex) {
-            Log.e("recordDelError", ex.toString());
-        }
-        for (SubTeritorry m : stList) {
-            ContentValues cv = new ContentValues();
-            cv.put("SubTerritoryId", m.getSubTerritoryId());
-            cv.put("SubTerritoryName", m.getSubTerritoryName().replace("'", "''"));
-            cv.put("TerritoryId", m.getTerritoryId());
-            database.insert(tableName, null, cv);
-        }
-        isTrue = true;
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
-    /*    try {
-            String tableName = "tblSubTerritory";
-            _deleteAllRecordsFromaTable(tableName);
-            SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < stList.size(); i++) {
-                SubTeritorry stInfo = stList.get(i);
-                String insertQuery = "Insert into tblSubTerritory(SubTerritoryId,SubTerritoryName,TerritoryId) " +
-                        // "values('" + stInfo.getSubTerritoryId() + "','" + stInfo.getSubTerritoryName() + "','" + stInfo.getTerritoryId() + "')";
-                        "values('" + stInfo.getSubTerritoryId() + "','" + stInfo.getSubTerritoryName().replace("'", "''") + "','" + stInfo.getTerritoryId() + "')";
-                database.execSQL(insertQuery);
+            for (SubTeritorry m : stList) {
+                try {
+                    ContentValues cv = new ContentValues();
+                    cv.put("SubTerritoryId", m.getSubTerritoryId());
+                    cv.put("SubTerritoryName", m.getSubTerritoryName() != null ? m.getSubTerritoryName().replace("'", "''") : "");
+                    cv.put("TerritoryId", m.getTerritoryId());
+                    database.insert(tableName, null, cv);
+                } catch (Exception rowEx) {
+                    Log.e("DBEX", rowEx.toString());
+                }
             }
-
-        } catch (Exception exception) {
-            // isTrue = false;
-            Log.e("DBEX", exception.toString());
-
-        }*/
+            isTrue = true;
+            database.setTransactionSuccessful();
+        } catch (Exception ex) {
+            Log.e("DBEX", ex.toString());
+        } finally {
+            database.endTransaction();
+            database.close();
+        }
         return isTrue;
     }
 
@@ -354,40 +358,25 @@ public class SyncDb_Helper {
         SQLiteDatabase database = dbHelperMain.getWritableDatabase();
         database.beginTransaction();
         try {
-            String query = "delete from '" + tableName + "';";
-            database.execSQL(query);
-        } catch (Exception ex) {
-            Log.e("recordDelError", ex.toString());
-        }
-        for (Market m : mList) {
-            ContentValues cv = new ContentValues();
-            cv.put("MarketId", m.getMarketId());
-            cv.put("MarketName", m.getMarketName().replace("'", "''"));
-            cv.put("SubTerritoryId", m.getSubTerritoryId());
-            database.insert(tableName, null, cv);
-        }
-        isTrue = true;
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
-        /*try {
-
-            String tableName = "tblMarket";
-            _deleteAllRecordsFromaTable(tableName);
-            SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < mList.size(); i++) {
-                Market mInfo = mList.get(i);
-                String insertQuery = "Insert into tblMarket(MarketId,MarketName,SubTerritoryId) " +
-                        // "values('" + mInfo.getMarketId() + "','" + mInfo.getMarketName() + "','" + mInfo.getSubTerritoryId() + "')";
-                        "values('" + mInfo.getMarketId() + "','" + mInfo.getMarketName().replace("'", "''") + "','" + mInfo.getSubTerritoryId() + "')";
-                database.execSQL(insertQuery);
+            for (Market m : mList) {
+                try {
+                    ContentValues cv = new ContentValues();
+                    cv.put("MarketId", m.getMarketId());
+                    cv.put("MarketName", m.getMarketName() != null ? m.getMarketName().replace("'", "''") : "");
+                    cv.put("SubTerritoryId", m.getSubTerritoryId());
+                    database.insert(tableName, null, cv);
+                } catch (Exception rowEx) {
+                    Log.e("DBEX", rowEx.toString());
+                }
             }
-
-        } catch (Exception exception) {
-            // isTrue = false;
-            Log.e("DBEX", exception.toString());
-
-        }*/
+            isTrue = true;
+            database.setTransactionSuccessful();
+        } catch (Exception ex) {
+            Log.e("DBEX", ex.toString());
+        } finally {
+            database.endTransaction();
+            database.close();
+        }
         return isTrue;
     }
 
@@ -397,17 +386,28 @@ public class SyncDb_Helper {
         try {
 
             String tableName = "tblNSMInfo";
-            _deleteAllRecordsFromaTable(tableName);
+           // _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < nList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < nList.size(); i++) {
                 NSM nInfo = nList.get(i);
-                String insertQuery = "Insert into tblNSMInfo(NSMEmpId,NSMId,EmpMasterCode,EmpName,GroupId) " +
-                        "values('" + nInfo.getNSMEmpId() + "','" + nInfo.getNSMId() + "','" + nInfo.getEmpMasterCode() + "','" + nInfo.getEmpName() + "','" + nInfo.getGroupId() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("NSMEmpId", nInfo.getNSMEmpId());
+values.put("NSMId", nInfo.getNSMId());
+values.put("EmpMasterCode", nInfo.getEmpMasterCode());
+values.put("EmpName", nInfo.getEmpName());
+values.put("GroupId", nInfo.getGroupId());
+database.insert("tblNSMInfo", null, values);
             }
 
-        } catch (Exception exception) {
-            // isTrue = false;
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
 
         }
@@ -420,15 +420,26 @@ public class SyncDb_Helper {
             String tableName = "tblRSMInfo";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < rList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < rList.size(); i++) {
                 RSM nInfo = rList.get(i);
-                String insertQuery = "Insert into tblRSMInfo(RSMEmpId,RSMId,EmpMasterCode,EmpName,RegionId) " +
-                        "values('" + nInfo.getRSMEmpId() + "','" + nInfo.getRSMId() + "','" + nInfo.getEmpMasterCode() + "','" + nInfo.getEmpName().replace("'", "''") + "','" + nInfo.getRegionId() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("RSMEmpId", nInfo.getRSMEmpId());
+values.put("RSMId", nInfo.getRSMId());
+values.put("EmpMasterCode", nInfo.getEmpMasterCode());
+values.put("EmpName", nInfo.getEmpName().replace("'", "''"));
+values.put("RegionId", nInfo.getRegionId());
+database.insert("tblRSMInfo", null, values);
             }
 
-        } catch (Exception exception) {
-            // isTrue = false;
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
 
         }
@@ -441,15 +452,26 @@ public class SyncDb_Helper {
             String tableName = "tblASMInfo";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 ASM nInfo = aList.get(i);
-                String insertQuery = "Insert into tblASMInfo(ASMEmpId,ASMId,EmpMasterCode,EmpName,AreaId) " +
-                        "values('" + nInfo.getASMEmpId() + "','" + nInfo.getASMId() + "','" + nInfo.getEmpMasterCode() + "','" + nInfo.getEmpName() + "','" + nInfo.getAreaId() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ASMEmpId", nInfo.getASMEmpId());
+values.put("ASMId", nInfo.getASMId());
+values.put("EmpMasterCode", nInfo.getEmpMasterCode());
+values.put("EmpName", nInfo.getEmpName());
+values.put("AreaId", nInfo.getAreaId());
+database.insert("tblASMInfo", null, values);
             }
 
-        } catch (Exception exception) {
-            // isTrue = false;
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
 
         }
@@ -461,15 +483,26 @@ public class SyncDb_Helper {
             String tableName = "tblMIOInfo";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < mList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < mList.size(); i++) {
                 MIO nInfo = mList.get(i);
-                String insertQuery = "Insert into tblMIOInfo(MIOEmpId,MIOId,EmpMasterCode,EmpName,TerritoryId) " +
-                        "values('" + nInfo.getMIOEmpId() + "','" + nInfo.getMIOId() + "','" + nInfo.getEmpMasterCode() + "','" + nInfo.getEmpName() + "','" + nInfo.getTerritoryId() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("MIOEmpId", nInfo.getMIOEmpId());
+values.put("MIOId", nInfo.getMIOId());
+values.put("EmpMasterCode", nInfo.getEmpMasterCode());
+values.put("EmpName", nInfo.getEmpName());
+values.put("TerritoryId", nInfo.getTerritoryId());
+database.insert("tblMIOInfo", null, values);
             }
 
-        } catch (Exception exception) {
-            // isTrue = false;
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
 
         }
@@ -495,9 +528,11 @@ public class SyncDb_Helper {
                 } catch (Exception exception) {
                     //exception.printStackTrace();
                 }
-                String insertQuery = "Insert into tblTeritory(TerritoryId,TerritoryName,TerritoryCode) " +
-                        "values('" + aInfo.getTerritoryId() + "','" + TerritoryName*//*aInfo.getTerritoryName().replace("'","''")*//* + "','" + aInfo.getTerritoryCode() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("TerritoryId", aInfo.getTerritoryId());
+values.put("TerritoryName", TerritoryName*//*aInfo.getTerritoryName().replace("'","''")*//*);
+values.put("TerritoryCode", aInfo.getTerritoryCode());
+database.insert("tblTeritory", null, values);
             }
 
         } catch (Exception exception) {
@@ -558,62 +593,45 @@ public class SyncDb_Helper {
             _deleteAllRecordsFromaTable(tableName);
 
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            String CustomerName = "";
-            String CustomerAddress = "";
-            String CustomerType = "";
-            String MarketName = "";
-            for (int i = 0; i < aList.size(); i++) {
-                Customer aInfo = aList.get(i);
-                try {
-                    if (aInfo.getCustomerName().equals("")) {
-                        CustomerName = "";
-                    } else {
-                        CustomerName = aInfo.getCustomerName().replace("'", "''");
-                    }
-                } catch (Exception exception) {
-                    //exception.printStackTrace();
-                }
-                try {
-                    if (aInfo.getAddress().equals("")) {
-                        CustomerAddress = "";
-                    } else {
-                        CustomerAddress = aInfo.getAddress().replace("'", "''");
-                    }
-                } catch (Exception exception) {
-                    //exception.printStackTrace();
-                }
-                try {
-                    if (aInfo.getCustomerType().equals("")) {
-                        CustomerType = "";
-                    } else {
-                        CustomerType = aInfo.getCustomerType().replace("'", "''");
-                    }
-                } catch (Exception exception) {
-                    //exception.printStackTrace();
-                }
-                try {
-                    if (aInfo.getMarketName().equals("")) {
-                        MarketName = "";
-                    } else {
-                        MarketName = aInfo.getMarketName().replace("'", "''");
-                    }
-                } catch (Exception exception) {
-                    //exception.printStackTrace();
-                }
+            database.beginTransaction();
+            try {
+                for (int i = 0; i < aList.size(); i++) {
+                    Customer aInfo = aList.get(i);
+                    android.content.ContentValues values = new android.content.ContentValues();
+                    values.put("CustomerMasterId", aInfo.getCustomerMasterId());
+                    values.put("CustomerName", aInfo.getCustomerName());
+                    values.put("CustomerCode", aInfo.getCustomerCode());
+                    values.put("CustomerAdress", aInfo.getAddress());
+                    values.put("CustomerType", aInfo.getCustomerType());
+                    values.put("CustomerCell", aInfo.getCellNo());
+                    values.put("CustomerBalance", aInfo.getBalance());
+                    values.put("CustomerCreditlimit", aInfo.getCreditLimit());
+                    values.put("Market", aInfo.getMarketName());
+                    values.put("MarketCode", aInfo.getMarketCode());
+                    values.put("GroupId", aInfo.getGroupId());
+                    values.put("RegionId", aInfo.getRegionId());
+                    values.put("AreaId", aInfo.getAreaId());
+                    values.put("TerritoryId", aInfo.getTerritoryId());
+                    values.put("SubTerritoryId", aInfo.getSubTerritoryId());
+                    values.put("MarketId", aInfo.getMarketId());
+                    values.put("Note", aInfo.getNote());
+                    values.put("CustomerCheck", aInfo.getCustomerCheck());
+                    values.put("CustomerTypeId", aInfo.getCustomerTypeId());
+                    values.put("ProgramTypeId", aInfo.getProgramTypeId());
+                    values.put("SMCTypeId", aInfo.getSMCTypeId());
 
-                String insertQuery = "Insert into tblCustomerInfo(CustomerMasterId,CustomerName,CustomerCode,CustomerAdress,CustomerType," +
-                        "CustomerCell,CustomerBalance,CustomerCreditlimit,Market,MarketCode,GroupId,RegionId,AreaId,TerritoryId,SubTerritoryId,MarketId,Note,CustomerCheck,CustomerTypeId,ProgramTypeId,SMCTypeId) " +
-                        "values('" + aInfo.getCustomerMasterId() + "','" + CustomerName + "','" + aInfo.getCustomerCode() + "','" + CustomerAddress + "'," +
-                        "'" + CustomerType + "','" + aInfo.getCellNo() + "','" + aInfo.getBalance() + "','" + aInfo.getCreditLimit() + "','" + MarketName + "','" + aInfo.getMarketCode() + "','" + aInfo.getGroupId() + "','" + aInfo.getRegionId() + "','" + aInfo.getAreaId() + "','" + aInfo.getTerritoryId() + "','" + aInfo.getSubTerritoryId() + "','" + aInfo.getMarketId() + "','" + aInfo.getNote() + "'," +
-                        "'" + aInfo.getCustomerCheck() + "','" + aInfo.getCustomerTypeId() + "','" + aInfo.getProgramTypeId() + "','" + aInfo.getSMCTypeId() + "')";
-                database.execSQL(insertQuery);
-
+                    database.insert(tableName, null, values);
+                }
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
             }
             database.close();
         } catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
         }
-        return isTrue = true;
+        return isTrue;
     }
 
     public boolean InsertCustomerStation(List<StationType> aList) {
@@ -623,14 +641,22 @@ public class SyncDb_Helper {
             String tableName = "tblCustomer_Station";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 StationType aInfo = aList.get(i);
-                String insertQuery = "Insert into tblCustomer_Station(StationTypeId,StationTypeName) " +
-                        "values('" + aInfo.getStationTypeId() + "','" + aInfo.getStationTypeName().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("StationTypeId", aInfo.getStationTypeId());
+values.put("StationTypeName", aInfo.getStationTypeName().replace("'", "''"));
+database.insert("tblCustomer_Station", null, values);
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -647,68 +673,49 @@ public class SyncDb_Helper {
             _deleteAllRecordsFromaTable("tblDoctorInfo");
 
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            String ChemberName = "";
-            String MarketName = "";
+            database.beginTransaction();
+            try {
+                for (int i = 0; i < aList.size(); i++) {
+                    DoctorListViewModel aInfo = aList.get(i);
+                    
+                    android.content.ContentValues values = new android.content.ContentValues();
+                    values.put("DoctorId", aInfo.getDoctorId());
+                    values.put("DoctorCode", aInfo.getDoctorCode());
+                    values.put("DoctorName", aInfo.getDoctorName());
+                    values.put("ChemberName", aInfo.getChemberName());
+                    values.put("DocContact", aInfo.getDocContact());
+                    values.put("DocTPDetailsId", aInfo.getDocTPDetailsId());
+                    values.put("DoctorTypeName", aInfo.getDoctorTypeName());
+                    values.put("ProgramTypeName", aInfo.getProgramTypeName());
+                    values.put("GroupId", aInfo.getGroupId());
+                    values.put("RegionId", aInfo.getRegionId());
+                    values.put("AreaId", aInfo.getAreaId());
+                    values.put("TerritoryId", aInfo.getTerritoryId());
+                    values.put("SubTerritoryId", aInfo.getSubTerritoryId());
+                    values.put("MarketId", aInfo.getMarketId());
+                    values.put("MarketName", aInfo.getMarketName());
+                    values.put("MarketCode", aInfo.getMarketCode());
+                    values.put("ProgramTypeId", aInfo.getProgramTypeId());
+                    values.put("DoctorTypeId", aInfo.getDoctorTypeId());
+                    values.put("SMCTypeId", aInfo.getSMCTypeId());
+                    values.put("SMCType", aInfo.getSMCType());
 
-           /* database.beginTransaction();
-            for (DoctorListViewModel e : aList) {
-                if(e.getChemberName().equals(""))
-                {
-                    ChemberName="";
-                }else {
-                    ChemberName=e.getChemberName().replace("'","''");
-                }
-                database.insert(e);
-            }
-            database.setTransactionSuccessful();
-            database.endTransaction();*/
+                    database.insert("tblDoctorInfo", null, values);
 
-            for (int i = 0; i < aList.size(); i++) {
-                DoctorListViewModel aInfo = aList.get(i);
-                try {
-                    if (aInfo.getChemberName().equals("")) {
-                        ChemberName = "";
-                    } else {
-                        ChemberName = aInfo.getChemberName().replace("'", "''");
-                    }
-
-                    if (aInfo.getMarketName().equals("")) {
-                        MarketName = "";
-                    } else {
-                        MarketName = aInfo.getMarketName().replace("'", "''");
-                    }
-
-                } catch (Exception exception) {
-
-                    //exception.printStackTrace();
-                }
-                String insertQuery = "Insert into tblDoctorInfo(DoctorId,DoctorCode,DoctorName,ChemberName,DocContact,DocTPDetailsId,DoctorTypeName,ProgramTypeName,GroupId,RegionId,AreaId,TerritoryId,SubTerritoryId,MarketId,MarketName,MarketCode,ProgramTypeId,DoctorTypeId,SMCTypeId,SMCType)" +
-                        "values('" + aInfo.getDoctorId() + "','" + aInfo.getDoctorCode() + "','" + aInfo.getDoctorName().replace("'", "''") + "'," +
-                        "'" + ChemberName /*aInfo.getChemberName() */ + "','" + aInfo.getDocContact() + "','" + aInfo.getDocTPDetailsId() + "','" + aInfo.getDoctorTypeName() + "','" + aInfo.getProgramTypeName() + "','" + aInfo.getGroupId() + "','" + aInfo.getRegionId() + "','" + aInfo.getAreaId() + "','" + aInfo.getTerritoryId() + "','" + aInfo.getSubTerritoryId()
-                        + "','" + aInfo.getMarketId() + "','" + MarketName + "','" + aInfo.getMarketCode() + "','" + aInfo.getProgramTypeId() + "','" + aInfo.getDoctorTypeId() + "','" + aInfo.getSMCTypeId() + "','" + aInfo.getSMCType() + "')";
-                // database.beginTransaction();
-                database.execSQL(insertQuery);
-                String brandname = "";
-                for (int j = 0; j < aList.get(i).getDoctorBrand().size(); j++) {
-                    DoctorBrand dbi = aList.get(i).getDoctorBrand().get(j);
-                    try {
-                        if (dbi.getBrandName().equals("")) {
-                            brandname = dbi.getBrandName();
-                        } else {
-                            brandname = dbi.getBrandName().replace("'", "''");
+                    if (aInfo.getDoctorBrand() != null) {
+                        for (int j = 0; j < aInfo.getDoctorBrand().size(); j++) {
+                            DoctorBrand dbi = aInfo.getDoctorBrand().get(j);
+                            android.content.ContentValues brandValues = new android.content.ContentValues();
+                            brandValues.put("BrandId", dbi.getBrandId());
+                            brandValues.put("BrandName", dbi.getBrandName());
+                            brandValues.put("DoctorId", dbi.getDoctorId());
+                            database.insert("tblDoctorBrand", null, brandValues);
                         }
-                    } catch (Exception exception) {
-
                     }
-                    String insertBrand = "Insert into tblDoctorBrand(BrandId,BrandName,DoctorId) " +
-                            "values('" + dbi.getBrandId() + "','" + brandname/*dbi.getBrandName().replace("'","''")*/ + "','" + dbi.getDoctorId() + "')";
-                    database.execSQL(insertBrand);
-
                 }
-           /*      database.setTransactionSuccessful();
+                database.setTransactionSuccessful();
+            } finally {
                 database.endTransaction();
-                database.close();*/
-
             }
 
         } catch (Exception exception) {
@@ -726,14 +733,22 @@ public class SyncDb_Helper {
             String tableName = "tblDoctor_Desig";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 DoctorDesignation aInfo = aList.get(i);
-                String insertQuery = "Insert into tblDoctor_Desig(DesignationId,DesignationName) " +
-                        "values('" + aInfo.getDesignationId() + "','" + aInfo.getDesignationName().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("DesignationId", aInfo.getDesignationId());
+values.put("DesignationName", aInfo.getDesignationName().replace("'", "''"));
+database.insert("tblDoctor_Desig", null, values);
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -748,14 +763,23 @@ public class SyncDb_Helper {
             String tableName = "tblDoctor_Degree";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 DoctorDegreeViewModel aInfo = aList.get(i);
-                String insertQuery = "Insert into tblDoctor_Degree(DegreeId,DegreeName,DoctorTypeId) " +
-                        "values('" + aInfo.getDegreeId() + "','" + aInfo.getDegreeName().replace("'", "''") + "','" + aInfo.getDoctorTypeId() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("DegreeId", aInfo.getDegreeId());
+values.put("DegreeName", aInfo.getDegreeName().replace("'", "''"));
+values.put("DoctorTypeId", aInfo.getDoctorTypeId());
+database.insert("tblDoctor_Degree", null, values);
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -770,14 +794,22 @@ public class SyncDb_Helper {
             String tableName = "tblDoctor_Speciality";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 DoctorSpecialityViewModel aInfo = aList.get(i);
-                String insertQuery = "Insert into tblDoctor_Speciality(SpecialityId,SpecialityName) " +
-                        "values('" + aInfo.getSpecialityId() + "','" + aInfo.getSpecialityName().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("SpecialityId", aInfo.getSpecialityId());
+values.put("SpecialityName", aInfo.getSpecialityName().replace("'", "''"));
+database.insert("tblDoctor_Speciality", null, values);
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -792,14 +824,22 @@ public class SyncDb_Helper {
             String tableName = "tblDoctor_Specialday";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 SpecialDay aInfo = aList.get(i);
-                String insertQuery = "Insert into tblDoctor_Specialday(SpecialDayId,SpecialDay) " +
-                        "values('" + aInfo.getSpecialDayId() + "','" + aInfo.getSpecialDay().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("SpecialDayId", aInfo.getSpecialDayId());
+values.put("SpecialDay", aInfo.getSpecialDay().replace("'", "''"));
+database.insert("tblDoctor_Specialday", null, values);
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -814,14 +854,22 @@ public class SyncDb_Helper {
             String tableName = "tblDoctor_Institution";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 InstitutionVM aInfo = aList.get(i);
-                String insertQuery = "Insert into tblDoctor_Institution(InstitutionId,Institution) " +
-                        "values('" + aInfo.getInstitutionId() + "','" + aInfo.getInstitution().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("InstitutionId", aInfo.getInstitutionId());
+values.put("Institution", aInfo.getInstitution().replace("'", "''"));
+database.insert("tblDoctor_Institution", null, values);
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -836,13 +884,21 @@ public class SyncDb_Helper {
             String tableName = "tblDoctor_Chembar";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 DoctorChamberTypeVM aInfo = aList.get(i);
-                String insertQuery = "Insert into tblDoctor_Chembar(ChamberTypeId,ChamberTypeName) " +
-                        "values('" + aInfo.getChamberTypeId() + "','" + aInfo.getChamberTypeName().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ChamberTypeId", aInfo.getChamberTypeId());
+values.put("ChamberTypeName", aInfo.getChamberTypeName().replace("'", "''"));
+database.insert("tblDoctor_Chembar", null, values);
             }
-            database.close();
+            
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }database.close();
 
         } catch (Exception exception) {
             isTrue = false;
@@ -859,13 +915,22 @@ public class SyncDb_Helper {
             String tableName = "tblDoctor_ChembarName";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 DoctorChamberName aInfo = aList.get(i);
-                String insertQuery = "Insert into tblDoctor_ChembarName(ChemberId,ChemberName,DoctorId) " +
-                        "values('" + aInfo.getChemberId() + "','" + aInfo.getChemberName().replace("'", "''") + "','" + aInfo.getDoctorId() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ChemberId", aInfo.getChemberId());
+values.put("ChemberName", aInfo.getChemberName().replace("'", "''"));
+values.put("DoctorId", aInfo.getDoctorId());
+database.insert("tblDoctor_ChembarName", null, values);
             }
-            database.close();
+            
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }database.close();
         } catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
@@ -882,14 +947,22 @@ public class SyncDb_Helper {
             String tableName = "tblDoctor_Type";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 DoctorTypeVM aInfo = aList.get(i);
-                String insertQuery = "Insert into tblDoctor_Type(DoctorTypeId,DoctorTypeName) " +
-                        "values('" + aInfo.getDoctorTypeId() + "','" + aInfo.getDoctorTypeName().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("DoctorTypeId", aInfo.getDoctorTypeId());
+values.put("DoctorTypeName", aInfo.getDoctorTypeName().replace("'", "''"));
+database.insert("tblDoctor_Type", null, values);
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -904,14 +977,22 @@ public class SyncDb_Helper {
             String tableName = "tbl_UserRole";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 UserRole aInfo = aList.get(i);
-                String insertQuery = "Insert into tbl_UserRole(UserRoleID,RoleName) " +
-                        "values('" + aInfo.getUserRoleID() + "','" + aInfo.getRoleName().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("UserRoleID", aInfo.getUserRoleID());
+values.put("RoleName", aInfo.getRoleName().replace("'", "''"));
+database.insert("tbl_UserRole", null, values);
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -926,13 +1007,23 @@ public class SyncDb_Helper {
             String tableName = "tbl_UserByRole";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 UserByRole aInfo = aList.get(i);
-                String insertQuery = "Insert into tbl_UserByRole(EmpInfoId,EmpName,EmpMasterCode,UserRoleID) " +
-                        "values('" + aInfo.getEmpInfoId() + "','" + aInfo.getEmpName() + "','" + aInfo.getEmpMasterCode() + "','" + aInfo.getUserRoleID() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("EmpInfoId", aInfo.getEmpInfoId());
+values.put("EmpName", aInfo.getEmpName());
+values.put("EmpMasterCode", aInfo.getEmpMasterCode());
+values.put("UserRoleID", aInfo.getUserRoleID());
+database.insert("tbl_UserByRole", null, values);
             }
-            database.close();
+            
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }database.close();
         } catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
@@ -948,14 +1039,22 @@ public class SyncDb_Helper {
             String tableName = "tblProgram_Type";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 ProgramType aInfo = aList.get(i);
-                String insertQuery = "Insert into tblProgram_Type(ProgramTypeId,ProgramType) " +
-                        "values('" + aInfo.getProgramTypeId() + "','" + aInfo.getProgramType().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ProgramTypeId", aInfo.getProgramTypeId());
+values.put("ProgramType", aInfo.getProgramType().replace("'", "''"));
+database.insert("tblProgram_Type", null, values);
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -970,15 +1069,25 @@ public class SyncDb_Helper {
             String tableName = "tblProvider_Type";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 ModelProviderType aInfo = aList.get(i);
-                String insertQuery = "Insert into tblProvider_Type(ProviderTypeId,ProviderType,forCustomer,forDoctor) " +
-                        "values('" + aInfo.getProviderTypeId() + "','" + aInfo.getProviderType().replace("'", "''") + "','" + aInfo.getForCustomer() + "','" + aInfo.getForDoctor() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ProviderTypeId", aInfo.getProviderTypeId());
+values.put("ProviderType", aInfo.getProviderType().replace("'", "''"));
+values.put("forCustomer", aInfo.getForCustomer());
+values.put("forDoctor", aInfo.getForDoctor());
+database.insert("tblProvider_Type", null, values);
                 isTrue = true;
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -992,15 +1101,25 @@ public class SyncDb_Helper {
             String tableName = "tblSMCType";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 ModelSMCType aInfo = aList.get(i);
-                String insertQuery = "Insert into tblSMCType(SMCTypeId,SMCType,forCustomer,forDoctor) " +
-                        "values('" + aInfo.getSMCTypeId() + "','" + aInfo.getSMCType().replace("'", "''") + "','" + aInfo.getForCustomer() + "','" + aInfo.getForDoctor() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("SMCTypeId", aInfo.getSMCTypeId());
+values.put("SMCType", aInfo.getSMCType().replace("'", "''"));
+values.put("forCustomer", aInfo.getForCustomer());
+values.put("forDoctor", aInfo.getForDoctor());
+database.insert("tblSMCType", null, values);
                 isTrue = true;
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -1013,15 +1132,24 @@ public class SyncDb_Helper {
             String tableName = "tblBrandInfo";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 Brand nInfo = aList.get(i);
-                String insertQuery = "Insert into tblBrandInfo(ProductBrandId,ProductSQName,MaxValue) " +
-                        "values('" + nInfo.getProductBrandId() + "','" + nInfo.getProductSQName().replace("'", "''") + "','" + nInfo.getMaxValue() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ProductBrandId", nInfo.getProductBrandId());
+values.put("ProductSQName", nInfo.getProductSQName().replace("'", "''"));
+values.put("MaxValue", nInfo.getMaxValue());
+database.insert("tblBrandInfo", null, values);
                 isTrue = true;
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -1035,14 +1163,22 @@ public class SyncDb_Helper {
             String tableName = "tblDoctorCategory";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 DoctorCategory nInfo = aList.get(i);
-                String insertQuery = "Insert into tblDoctorCategory(CategoryId,CategoryName) " +
-                        "values('" + nInfo.getCategoryId() + "','" + nInfo.getCategoryName().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("CategoryId", nInfo.getCategoryId());
+values.put("CategoryName", nInfo.getCategoryName().replace("'", "''"));
+database.insert("tblDoctorCategory", null, values);
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -1055,14 +1191,23 @@ public class SyncDb_Helper {
             String tableName = "tblVisit_Type";
             _deleteAllRecordsFromaTable(tableName);
 
-            SQLiteDatabase databases = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aTpp.size(); i++) {
+            SQLiteDatabase database = dbHelperMain.getWritableDatabase();
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aTpp.size(); i++) {
                 TourTypeViewModel aInfo = aTpp.get(i);
-                String insertQuery = "Insert into tblVisit_Type(TourTypeId,TourTypeName) " +
-                        "values('" + aInfo.getTourTypeId() + "','" + aInfo.getTourTypeName().replace("'", "''") + "')";
-                databases.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("TourTypeId", aInfo.getTourTypeId());
+values.put("TourTypeName", aInfo.getTourTypeName().replace("'", "''"));
+database.insert("tblVisit_Type", null, values);
             }
-        } catch (Exception exception) {
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
         }
 
@@ -1074,14 +1219,22 @@ public class SyncDb_Helper {
             String tableName = "tblCustomer_Type";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 CustomerType aInfo = aList.get(i);
-                String insertQuery = "Insert into tblCustomer_Type(CustomerTypeId,CustomerType) " +
-                        "values('" + aInfo.getCustomerTypeId() + "','" + aInfo.getCustomerType().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("CustomerTypeId", aInfo.getCustomerTypeId());
+values.put("CustomerType", aInfo.getCustomerType().replace("'", "''"));
+database.insert("tblCustomer_Type", null, values);
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -1095,14 +1248,22 @@ public class SyncDb_Helper {
             String tableName = "tblContact_Type";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 ContactTypeVM aInfo = aList.get(i);
-                String insertQuery = "Insert into tblContact_Type(ContactTypeId,ContactType) " +
-                        "values('" + aInfo.getContactTypeId() + "','" + aInfo.getContactType() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ContactTypeId", aInfo.getContactTypeId());
+values.put("ContactType", aInfo.getContactType());
+database.insert("tblContact_Type", null, values);
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -1116,14 +1277,22 @@ public class SyncDb_Helper {
             String tableName = "tblExpense_Type";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 ExpenseTypeMaster aInfo = aList.get(i);
-                String insertQuery = "Insert into tblExpense_Type(ExpenseTypeId,ExpenseTypeName) " +
-                        "values('" + aInfo.getExpenseTypeId() + "','" + aInfo.getExpenseTypeName().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ExpenseTypeId", aInfo.getExpenseTypeId());
+values.put("ExpenseTypeName", aInfo.getExpenseTypeName().replace("'", "''"));
+database.insert("tblExpense_Type", null, values);
             }
 
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             isTrue = false;
             Log.e("DBEX", exception.toString());
 
@@ -1137,13 +1306,23 @@ public class SyncDb_Helper {
             String tableName = "tblLeave_Type";
             _deleteAllRecordsFromaTable(tableName);
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 LeaveTypeInfo aInfo = aList.get(i);
-                String insertQuery = "Insert into tblLeave_Type(LeaveBalanceId,LeaveTypeName,YearlyLeaveBalance) " +
-                        "values('" + aInfo.getLeaveBalanceId() + "','" + aInfo.getLeaveTypeName().replace("'", "''") + "','" + aInfo.getYearlyLeaveBalance() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("LeaveBalanceId", aInfo.getLeaveBalanceId());
+values.put("LeaveTypeName", aInfo.getLeaveTypeName().replace("'", "''"));
+values.put("YearlyLeaveBalance", aInfo.getYearlyLeaveBalance());
+database.insert("tblLeave_Type", null, values);
             }
-        } catch (Exception exception) {
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
         }
         return isTrue;
@@ -1155,12 +1334,22 @@ public class SyncDb_Helper {
             _deleteAllRecordsFromaTable(tableName);
 
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 PrescriptionTYpe aInfo = aList.get(i);
-                String insertQuery = "Insert into tblPrescrip_Type(PrescriptionTypeId,PrescriptionType) " + "values('" + aInfo.getPrescriptionTypeId() + "','" + aInfo.getPrescriptionType().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("PrescriptionTypeId", aInfo.getPrescriptionTypeId());
+values.put("PrescriptionType", aInfo.getPrescriptionType().replace("'", "''"));
+database.insert("tblPrescrip_Type", null, values);
             }
-        } catch (Exception exception) {
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
         }
         return isTrue;
@@ -1172,12 +1361,22 @@ public class SyncDb_Helper {
             _deleteAllRecordsFromaTable(tableName);
 
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < nList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < nList.size(); i++) {
                 NonEffectiveReason ninfo = nList.get(i);
-                String insertQuery = "Insert into tblNonEffectiveReason(ReasonId,ReasonName) " + "values('" + ninfo.getReasonId() + "','" + ninfo.getReasonName().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ReasonId", ninfo.getReasonId());
+values.put("ReasonName", ninfo.getReasonName().replace("'", "''"));
+database.insert("tblNonEffectiveReason", null, values);
             }
-        } catch (Exception exception) {
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
         }
         return isTrue;
@@ -1189,13 +1388,22 @@ public class SyncDb_Helper {
             _deleteAllRecordsFromaTable(tableName);
 
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 Transport aInfo = aList.get(i);
-                String insertQuery = "Insert into tblTransportInfo(TransportId,TransportName) " +
-                        "values('" + aInfo.getTransportId() + "','" + aInfo.getTransportName().replace("'", "''") + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("TransportId", aInfo.getTransportId());
+values.put("TransportName", aInfo.getTransportName().replace("'", "''"));
+database.insert("tblTransportInfo", null, values);
             }
-        } catch (Exception exception) {
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
         }
         return isTrue;
@@ -1207,13 +1415,30 @@ public class SyncDb_Helper {
             _deleteAllRecordsFromaTable(tableName);
 
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aList.size(); i++) {
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aList.size(); i++) {
                 Product aInfo = aList.get(i);
-                String insertQuery = "Insert into tbl_ProductInfo(ProductId,ProductName,ProductCode,ProductDes,PackSize,UnitPrice,QuotedPrice,VatPercentage,VatAmountPerunit,CustomerMasterId) " +
-                        "values('" + aInfo.getProductId() + "','" + aInfo.getProductName().replace("'", "''") + "','" + aInfo.getProductCode() + "','" + aInfo.getProductDes().replace("'", "''") + "','" + aInfo.getPackSize() + "','" + aInfo.getUnitPrice() + "','" + aInfo.getQuotedPrice() + "','" + aInfo.getVatPercentage() + "','" + aInfo.getVatAmountPerunit() + "','" + aInfo.getCustomerMasterId() + "')";
-                database.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ProductId", aInfo.getProductId());
+values.put("ProductName", aInfo.getProductName().replace("'", "''"));
+values.put("ProductCode", aInfo.getProductCode());
+values.put("ProductDes", aInfo.getProductDes().replace("'", "''"));
+values.put("PackSize", aInfo.getPackSize());
+values.put("UnitPrice", aInfo.getUnitPrice());
+values.put("QuotedPrice", aInfo.getQuotedPrice());
+values.put("VatPercentage", aInfo.getVatPercentage());
+values.put("VatAmountPerunit", aInfo.getVatAmountPerunit());
+values.put("CustomerMasterId", aInfo.getCustomerMasterId());
+database.insert("tbl_ProductInfo", null, values);
             }
-        } catch (Exception exception) {
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
         }
         return isTrue;
@@ -1224,15 +1449,25 @@ public class SyncDb_Helper {
             String tableName = "tbl_ProductSampleInfo";
             _deleteAllRecordsFromaTable(tableName);
 
-            SQLiteDatabase databases = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aProduct.size(); i++) {
+            SQLiteDatabase database = dbHelperMain.getWritableDatabase();
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aProduct.size(); i++) {
                 ProductSample aInfo = aProduct.get(i);
-                String insertQuery = "Insert into tbl_ProductSampleInfo(ProductId,ProductName,ProductCode) " +
-                        "values('" + aInfo.getProductId() + "','" + aInfo.getProductName().replace("'", "''") + "','" + aInfo.getProductCode() + "')";
-                databases.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ProductId", aInfo.getProductId());
+values.put("ProductName", aInfo.getProductName().replace("'", "''"));
+values.put("ProductCode", aInfo.getProductCode());
+database.insert("tbl_ProductSampleInfo", null, values);
             }
-            databases.close();
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }database.close();
         } catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
         }
 
@@ -1244,16 +1479,26 @@ public class SyncDb_Helper {
             String tableName = "tbl_ProductGiftInfo";
             _deleteAllRecordsFromaTable(tableName);
 
-            SQLiteDatabase databases = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aProduct.size(); i++) {
+            SQLiteDatabase database = dbHelperMain.getWritableDatabase();
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aProduct.size(); i++) {
                 Gift aInfo = aProduct.get(i);
-                String insertQuery = "Insert into tbl_ProductGiftInfo(ProductId,ProductName,ProductCode) " +
-                        "values('" + aInfo.getProductId() + "','" + aInfo.getProductName().replace("'", "''") + "','" + aInfo.getProductCode() + "')";
-                databases.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ProductId", aInfo.getProductId());
+values.put("ProductName", aInfo.getProductName().replace("'", "''"));
+values.put("ProductCode", aInfo.getProductCode());
+database.insert("tbl_ProductGiftInfo", null, values);
                 isTrue = true;
             }
-            databases.close();
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }database.close();
         } catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
         }
 
@@ -1265,14 +1510,25 @@ public class SyncDb_Helper {
             String tableName = "tblTourPlanPurpose";
             _deleteAllRecordsFromaTable(tableName);
 
-            SQLiteDatabase databases = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aTpp.size(); i++) {
+            SQLiteDatabase database = dbHelperMain.getWritableDatabase();
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aTpp.size(); i++) {
                 TourPurposeViewModel aInfo = aTpp.get(i);
-                String insertQuery = "Insert into tblTourPlanPurpose(TPId,TPName,IsMarketVisit,IsOtherVisit) " +
-                        "values('" + aInfo.getTPId() + "','" + aInfo.getTPName().replace("'", "''") + "','" + aInfo.getIsMarketVisit() + "','" + aInfo.getIsOtherVisit() + "')";
-                databases.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("TPId", aInfo.getTPId());
+values.put("TPName", aInfo.getTPName().replace("'", "''"));
+values.put("IsMarketVisit", aInfo.getIsMarketVisit());
+values.put("IsOtherVisit", aInfo.getIsOtherVisit());
+database.insert("tblTourPlanPurpose", null, values);
             }
-        } catch (Exception exception) {
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
+            isTrue = false;
             Log.e("DBEX", exception.toString());
         }
 
@@ -1285,14 +1541,23 @@ public class SyncDb_Helper {
             String tableName = "tbl_ProductSampleInfo";
             _deleteAllRecordsFromaTable(tableName);
 
-            SQLiteDatabase databases = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < aProduct.size(); i++) {
+            SQLiteDatabase database = dbHelperMain.getWritableDatabase();
+            
+            database.beginTransaction();
+            try {
+for (int i = 0; i < aProduct.size(); i++) {
                 ProductSample aInfo = aProduct.get(i);
-                String insertQuery = "Insert into tbl_ProductSampleInfo(ProductId,ProductName,ProductCode) " +
-                        "values('" + aInfo.getProductId() + "','" + aInfo.getProductName() + "','" + aInfo.getProductCode() + "')";
-                databases.execSQL(insertQuery);
+                android.content.ContentValues values = new android.content.ContentValues();
+values.put("ProductId", aInfo.getProductId());
+values.put("ProductName", aInfo.getProductName());
+values.put("ProductCode", aInfo.getProductCode());
+database.insert("tbl_ProductSampleInfo", null, values);
             }
-        } catch (Exception exception) {
+        
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }} catch (Exception exception) {
             Log.e("DBEX", exception.toString());
         }
 
@@ -1316,6 +1581,7 @@ public class SyncDb_Helper {
 
     //Initial Sync
     public boolean Insert_InitTableB(String today, String todaytime) {
+        boolean isTrue = false;
         try {
             String tableName = "tblInitTable";
             _deleteAllRecordsFromaTable(tableName);
@@ -1325,10 +1591,11 @@ public class SyncDb_Helper {
                     "values(1,'" + today + "','" + todaytime + "')";
             database.execSQL(insertQuery);
             database.close();
+            isTrue = true;
         } catch (Exception exception) {
             Log.e("DBEX", exception.toString());
         }
-        return true;
+        return isTrue;
     }
 
     //Check Data in initial Table

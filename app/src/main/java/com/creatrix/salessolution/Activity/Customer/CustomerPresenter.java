@@ -2,6 +2,7 @@ package com.creatrix.salessolution.Activity.Customer;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 
@@ -116,7 +117,9 @@ public class CustomerPresenter implements ICustomerAdd.Presenter {
         progressDoalog.setCanceledOnTouchOutside(false);
         try{
             ApiCustomerCall service = RetrofitClientInstance.getRetrofitInstance().create(ApiCustomerCall.class);
-            Call<ResultInfo> call = service.SaveCustomer(aInfo);
+            Call<ResultInfo> call = "CustBSPUpdate".equals(who)
+                    ? service.UpdateCustomerBSP(aInfo)
+                    : service.SaveCustomer(aInfo);
             call.enqueue(new Callback<ResultInfo>() {
                 @Override
                 public void onResponse(Call<ResultInfo> call, Response<ResultInfo> response) {
@@ -125,6 +128,16 @@ public class CustomerPresenter implements ICustomerAdd.Presenter {
                     if(info !=null){
                         if(info.getSuccess() == true){
                             progressDoalog.dismiss();
+
+                            if ("CustBSPUpdate".equals(who)) {
+                                String bspCode  = aInfo.getCustomerBSPCode(); // <-- নিশ্চিত করুন এই getter নামটাই আছে
+
+                                if (!TextUtils.isEmpty(bspCode) && !TextUtils.isEmpty(bspCode)) {
+                                    dbCrudHelper.updateCustomerBspCode_SQLite(aInfo.getCustomerMasterId(), bspCode.trim());
+                                } else {
+                                    Log.w("BSP_UPDATE", "MasterId or BSPCode empty; skipping SQLite update");
+                                }
+                            }
                             view.onSubmitSuccess("Customer Successfully Submitted",who);
                         }
                         else if(info.getValiCheck()==true)

@@ -10,6 +10,8 @@ import com.creatrix.salessolution.DBAdapter.SyncDb_Helper;
 import com.creatrix.salessolution.Interface.ISyncMaster;
 import com.creatrix.salessolution.Model.Customer;
 import com.creatrix.salessolution.Model.CustomerType;
+import com.creatrix.salessolution.Model.DistrictVM;
+import com.creatrix.salessolution.Model.DivisionVM;
 import com.creatrix.salessolution.Model.Doctor.Brand;
 import com.creatrix.salessolution.Model.Doctor.ContactTypeVM;
 import com.creatrix.salessolution.Model.Doctor.DoctorCategory;
@@ -20,7 +22,6 @@ import com.creatrix.salessolution.Model.Doctor.DoctorDesignation;
 import com.creatrix.salessolution.Model.Doctor.DoctorListViewModel;
 import com.creatrix.salessolution.Model.Doctor.DoctorSpecialityViewModel;
 import com.creatrix.salessolution.Model.Doctor.DoctorTypeVM;
-import com.creatrix.salessolution.Model.Doctor.ProgramType;
 import com.creatrix.salessolution.Model.Doctor.SpecialDay;
 import com.creatrix.salessolution.Model.ExpenseTypeMaster;
 import com.creatrix.salessolution.Model.Gift;
@@ -44,6 +45,7 @@ import com.creatrix.salessolution.Model.ProductSample;
 import com.creatrix.salessolution.Model.QuotedPrice;
 import com.creatrix.salessolution.Model.StationType;
 
+import com.creatrix.salessolution.Model.ThanaVM;
 import com.creatrix.salessolution.Model.TourPurposeViewModel;
 import com.creatrix.salessolution.Model.TourTypeViewModel;
 import com.creatrix.salessolution.Model.Transport;
@@ -118,9 +120,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<NSM>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetNSM("Error", false);
                 }
             });
         } catch (Exception ex) {
@@ -152,9 +153,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<RSM>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetDZSM("Error", false);
                 }
             });
 
@@ -187,9 +187,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<ASM>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetAM("Error", false);
                 }
             });
 
@@ -222,9 +221,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<MIO>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetMIO("Error", false);
                 }
             });
 
@@ -234,6 +232,9 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
     @Override
     public void cllGroup(String empcode, String emprole) {
+
+
+        syncDb_helper.deleteAllMasterTables();
         //Group
         try {
             ApiMasterSync service = RetrofitClientInstance.getRetrofitInstance().create(ApiMasterSync.class);
@@ -242,6 +243,7 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
                 @Override
                 public void onResponse(@NonNull Call<List<Group>> call, @NonNull Response<List<Group>> response) {
                     List<Group> group = response.body();
+
                     if (group != null) {
                         boolean isTrue = syncDb_helper.InsertGroup(group);
                         if (isTrue) {
@@ -256,9 +258,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<Group>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetGroup("Error", false);
                 }
             });
 
@@ -323,9 +324,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<Region>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetZone("Error", false);
                 }
             });
 
@@ -357,9 +357,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<Area>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetArea("Error", false);
                 }
             });
 
@@ -391,9 +390,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<Teritorry>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetTeritory("Error", false);
                 }
             });
 
@@ -425,9 +423,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<SubTeritorry>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetSTeritory("Error", false);
                 }
             });
 
@@ -459,9 +456,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<Market>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetMarket("Error", false);
                 }
             });
 
@@ -495,7 +491,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<Customer>> call, @NonNull Throwable t) {
-
+                    Log.e("DBEX", t.toString());
+                    view.onGetCustomer("Error", false);
                 }
             });
 
@@ -528,9 +525,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<StationType>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetCustomerStation("Error", false);
                 }
             });
 
@@ -562,14 +558,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<DoctorListViewModel>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                        //viewBindings.docTxt.setText("Slow Network detected");
-                    } else {
-                       // viewBindings.docTxt.setText("Some Error occured");
-
-                    }
-
-
+                    Log.e("DBEX", t.toString());
+                    view.onGetDoctor("Error", false);
                 }
             });
         } catch (Exception ex) {
@@ -601,9 +591,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<DoctorDesignation>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetDesignation("Error", false);
                 }
             });
 
@@ -635,9 +624,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<DoctorDegreeViewModel>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetDegree("Error", false);
                 }
             });
         } catch (Exception ex) {
@@ -668,9 +656,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<DoctorSpecialityViewModel>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetSpeciality("Error", false);
                 }
             });
 
@@ -702,9 +689,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<SpecialDay>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetSpecialday("Error", false);
                 }
             });
 
@@ -736,9 +722,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<InstitutionVM>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetInstitution("Error", false);
                 }
             });
 
@@ -771,9 +756,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<DoctorChamberTypeVM>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetChamberType("Error", false);
                 }
             });
 
@@ -805,9 +789,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<DoctorChamberName>> call, Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetChamberName("Error", false);
                 }
             });
 
@@ -838,9 +821,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
                 }
                 @Override
                 public void onFailure(@NonNull Call<List<Brand>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetBrand("Error", false);
                 }
             });
 
@@ -872,9 +854,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<DoctorCategory>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetDoccategory("Error", false);
                 }
             });
 
@@ -939,9 +920,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<UserRole>> call, Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetUserRole("Error", false);
                 }
             });
 
@@ -975,9 +955,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<UserByRole>> call, Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetUserByRole("Error", false);
                 }
             });
 
@@ -1011,14 +990,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<Product>> call, Throwable t) {
-
-                    if (t instanceof SocketTimeoutException) {
-
-                    } else {
-
-                    }
-
-
+                    Log.e("DBEX", t.toString());
+                    view.onGetProduct("Error", false);
                 }
             });
 
@@ -1051,14 +1024,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<ProductSample>> call, @NonNull Throwable t) {
-
-                    if (t instanceof SocketTimeoutException) {
-
-                    } else {
-
-                    }
-
-
+                    Log.e("DBEX", t.toString());
+                    view.onGetProductSample("Error", false);
                 }
             });
 
@@ -1091,9 +1058,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<Gift>> call, Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetProductGift("Error", false);
                 }
             });
 
@@ -1125,9 +1091,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<QuotedPrice>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetQuotedPrice("Error", false);
                 }
             });
 
@@ -1159,9 +1124,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<DoctorTypeVM>> call, Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetDoctorType("Error", false);
                 }
             });
 
@@ -1193,9 +1157,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<CustomerType>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetCustomerType("Error", false);
                 }
             });
 
@@ -1227,9 +1190,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<ContactTypeVM>> call, Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetDoctorContactType("Error", false);
                 }
             });
 
@@ -1263,11 +1225,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<ExpenseTypeMaster>> call, Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                        Log.e("TAG", "onFailure: ", t);
-                    } else {
-                        Log.e("TAG", "onFailure: ", t);
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetExpenseType("Error", false);
                 }
             });
 
@@ -1302,11 +1261,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<LeaveTypeInfo>> call, Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                        Log.e("TAG", "onFailure: ", t);
-                    } else {
-                        Log.e("TAG", "onFailure: ", t);
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetLeaveType("Error", false);
                 }
             });
 
@@ -1340,11 +1296,113 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<PrescriptionTYpe>> call, Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                        Log.e("TAG", "onFailure: ", t);
-                    } else {
-                        Log.e("TAG", "onFailure: ", t);
+                    Log.e("DBEX", t.toString());
+                    view.onGetPrescriptionType("Error", false);
+                }
+            });
+
+        } catch (Exception ex) {
+            Log.e("TAG", "onFailure: ", ex);
+        }
+    }
+
+    @Override
+    public void cllDivision() {
+
+        //Prescription Type
+        try {
+            apiSeedDataCall service = RetrofitClientInstance.getRetrofitInstance().create(apiSeedDataCall.class);
+            Call<List<DivisionVM>> call = service.GetDivisionAll();
+            call.enqueue(new Callback<List<DivisionVM>>() {
+                @Override
+                public void onResponse(Call<List<DivisionVM>> call, Response<List<DivisionVM>> response) {
+                    List<DivisionVM> prestype = response.body();
+                    if (prestype != null) {
+                        boolean isTrue = syncDb_helper.InsertDivision(prestype);
+                        if (isTrue){
+                            view.onGetPrescriptionType("Done",true);
+                        } else {
+                            view.onGetPrescriptionType("Error",false);
+                        }
+                    }else {
+                        view.onGetPrescriptionType("Done",true);
                     }
+                }
+
+                @Override
+                public void onFailure(Call<List<DivisionVM>> call, Throwable t) {
+                    Log.e("DBEX", t.toString());
+                    view.onGetPrescriptionType("Error", false);
+                }
+            });
+
+        } catch (Exception ex) {
+            Log.e("TAG", "onFailure: ", ex);
+        }
+    }
+
+    @Override
+    public void cllDistrict() {
+
+        //Prescription Type
+        try {
+            apiSeedDataCall service = RetrofitClientInstance.getRetrofitInstance().create(apiSeedDataCall.class);
+            Call<List<DistrictVM>> call = service.GetDistrict();
+            call.enqueue(new Callback<List<DistrictVM>>() {
+                @Override
+                public void onResponse(Call<List<DistrictVM>> call, Response<List<DistrictVM>> response) {
+                    List<DistrictVM> prestype = response.body();
+                    if (prestype != null) {
+                        boolean isTrue = syncDb_helper.InsertDistrict(prestype);
+                        if (isTrue){
+                            view.onGetPrescriptionType("Done",true);
+                        } else {
+                            view.onGetPrescriptionType("Error",false);
+                        }
+                    }else {
+                        view.onGetPrescriptionType("Done",true);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<DistrictVM>> call, Throwable t) {
+                    Log.e("DBEX", t.toString());
+                    view.onGetPrescriptionType("Error", false);
+                }
+            });
+
+        } catch (Exception ex) {
+            Log.e("TAG", "onFailure: ", ex);
+        }
+    }
+
+    @Override
+    public void cllThana() {
+
+        //Prescription Type
+        try {
+            apiSeedDataCall service = RetrofitClientInstance.getRetrofitInstance().create(apiSeedDataCall.class);
+            Call<List<ThanaVM>> call = service.GetThana();
+            call.enqueue(new Callback<List<ThanaVM>>() {
+                @Override
+                public void onResponse(Call<List<ThanaVM>> call, Response<List<ThanaVM>> response) {
+                    List<ThanaVM> prestype = response.body();
+                    if (prestype != null) {
+                        boolean isTrue = syncDb_helper.InsertThana(prestype);
+                        if (isTrue){
+                            view.onGetPrescriptionType("Done",true);
+                        } else {
+                            view.onGetPrescriptionType("Error",false);
+                        }
+                    }else {
+                        view.onGetPrescriptionType("Done",true);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<ThanaVM>> call, Throwable t) {
+                    Log.e("DBEX", t.toString());
+                    view.onGetPrescriptionType("Error", false);
                 }
             });
 
@@ -1377,11 +1435,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<NonEffectiveReason>> call, Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                        Log.e("TAG", "onFailure: ", t);
-                    } else {
-                        Log.e("TAG", "onFailure: ", t);
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetNonEffectivereason("Error", false);
                 }
             });
 
@@ -1415,9 +1470,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<Transport>> call, Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetTransportList("Error", false);
                 }
             });
 
@@ -1450,9 +1504,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<TourPurposeViewModel>> call, Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetTourPurpose("Error", false);
                 }
             });
 
@@ -1485,9 +1538,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(Call<List<TourTypeViewModel>> call, Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetVisitType("Error", false);
                 }
             });
 
@@ -1519,9 +1571,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<ModelProviderType>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetProviderType("Error", false);
                 }
             });
 
@@ -1553,9 +1604,8 @@ public class SyncMasterPresenter implements ISyncMaster.Presenter {
 
                 @Override
                 public void onFailure(@NonNull Call<List<ModelSMCType>> call, @NonNull Throwable t) {
-                    if (t instanceof SocketTimeoutException) {
-                    } else {
-                    }
+                    Log.e("DBEX", t.toString());
+                    view.onGetSMCType("Error", false);
                 }
             });
 

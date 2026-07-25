@@ -54,7 +54,13 @@ public class DoctorARAdapter extends RecyclerView.Adapter<DoctorARAdapter.vh> {
         if (dList != null) {
             DoctorARModel ps = dList.get(position);
             holder.createdat.setText(ps.getCreatedAt());
-            holder.docName.setText(ps.getDoctorCode() +"("+ps.getStatus()+")");
+            String status = ps.getStatus();
+            if (status != null && !status.isEmpty()) {
+                holder.docName.setText(ps.getDoctorCode() + " (" + status + ")");
+            } else {
+                holder.docName.setText(ps.getDoctorCode());
+            }
+
             holder.docmarket.setText(ps.getMarketName());
             holder.docwaiting.setText(ps.getWaitingRole());
             //holder.docstatus.setText(ps.getActionStatus());

@@ -16,13 +16,13 @@ import retrofit2.http.Query;
 public interface apiSeedDataCall {
     @Headers({"Accept: application/json"})
 
-    @GET("/api/SeedData/GetDivisionAll")
+    @GET("/api/SeedData/GetBSPDivisionAll")
     Call<List<DivisionVM>> GetDivisionAll();
 
-    @GET("/api/SeedData/GetDistrict")
+    @GET("/api/SeedData/GetBSPDistrict")
     Call<List<DistrictVM>> GetDistrict();
 
-    @GET("/api/SeedData/GetThana")
+    @GET("/api/SeedData/GetBSPThana")
    // Call<List<ThanaVM>> GetThana(@Query("id") int id);
     Call<List<ThanaVM>> GetThana();
 

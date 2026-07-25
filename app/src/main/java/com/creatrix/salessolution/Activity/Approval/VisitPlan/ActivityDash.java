@@ -87,7 +87,7 @@ public class ActivityDash extends AppCompatActivity implements IMioDashboard.Vie
                     binding.menuPending.setVisibility(View.VISIBLE);
                     break;
                 case "DZSM":
-                    Regionid = String.valueOf(dbCrudHelper.getCurrentUserRegionId_SQLite());
+                    Regionid = String.valueOf(dbCrudHelper.getCurrentUserRegionId_SQLite(String.valueOf(empId)));
                     params = "AND View_Webapi_EmployeeFieldForceInfo" + tagR + Regionid;
                     binding.layPendings.setVisibility(View.VISIBLE);
                     binding.menuPending.setVisibility(View.VISIBLE);
@@ -235,6 +235,11 @@ public class ActivityDash extends AppCompatActivity implements IMioDashboard.Vie
                 if (aData.getBonusGift() != null) {
                     if (!aData.getBonusGift().equals("0")) {
                         binding.bonusgift.setText(aData.getBonusGift());
+                    }
+                }
+                if (aData.getTotalvsp() != null) {
+                    if (!aData.getBonusGift().equals("0")) {
+                        binding.VisitPlanCount.setText(aData.getTotalvsp());
                     }
                 }
             }

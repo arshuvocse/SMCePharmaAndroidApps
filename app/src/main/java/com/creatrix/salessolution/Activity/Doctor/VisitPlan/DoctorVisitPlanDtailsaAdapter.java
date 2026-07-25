@@ -30,6 +30,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -66,73 +68,56 @@ public class DoctorVisitPlanDtailsaAdapter extends RecyclerView.Adapter<DoctorVi
     @Override
     public void onBindViewHolder(@NonNull VPDH holder, int position) {
         try {
+            // Sort list by Doctor Name before binding (safe but not efficient if called every time)
+            Collections.sort(monthDate.getVisitplanList(), new Comparator<VisitplanModel>() {
+                @Override
+                public int compare(VisitplanModel o1, VisitplanModel o2) {
+                    String name1 = o1.getDoctorName() != null ? o1.getDoctorName() : "";
+                    String name2 = o2.getDoctorName() != null ? o2.getDoctorName() : "";
+                    return name1.compareToIgnoreCase(name2);
+                }
+            });
+
             VisitplanModel doclist = monthDate.getVisitplanList().get(position);
-            // VisitplanModel doclist = vpdocList.get(position);
+
             Dialog d = new Dialog(c);
+
             if (doclist.getDoctorName() != null) {
-                //Fragment fragment = null;
-               // holder.tv_name.setText(data.getVisitplanList().get(position).getDoctorName());
                 holder.tv_name.setText(doclist.getDoctorName());
                 holder.brandDiv.setVisibility(View.GONE);
                 holder.promoDiv.setVisibility(View.GONE);
                 holder.sampleDiv.setVisibility(View.GONE);
 
-                holder.cardView.setOnLongClickListener(v ->{
+                holder.cardView.setOnLongClickListener(v -> {
                     d.setContentView(R.layout.popup_delete);
                     d.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT, Toolbar.LayoutParams.WRAP_CONTENT);
-                    //find the aspects
+
                     TextView yes, no;
                     yes = d.findViewById(R.id.yes);
                     no = d.findViewById(R.id.no);
                     d.show();
 
-                    //if want to delete
                     yes.setOnClickListener(v1 -> {
-                        dListener.deleteItemFromServer(position,Integer.parseInt(doclist.getDocTPDetailsId()));
+                        dListener.deleteItemFromServer(position, Integer.parseInt(doclist.getDocTPDetailsId()));
                         d.dismiss();
-                       // monthDate.getVisitplanList().remove(position);
                         notifyDataSetChanged();
                     });
-                    //if don't want to delete
-                    no.setOnClickListener(v1 -> {
-                        d.dismiss();
-                    });
+
+                    no.setOnClickListener(v1 -> d.dismiss());
 
                     return false;
-
                 });
-               // holder.tv_date.setText(String.valueOf(data.getDateV()));
-               /* holder.cardView.setOnClickListener(v -> {
 
-                    Intent in = new Intent(c, VisitPlanDetailsActivity.class);
-                    in.putExtra("Month", data.getMonthName());
-                    in.putExtra("Year", String.valueOf(data.getYearV()));
-                    in.putExtra("Date", String.valueOf(data.getDateV()));
-                    Gson gson=new Gson();
-                    String doclist=gson.toJson(vpList);
-                    String item=gson.toJson(monthList);
-
-                    in.putExtra("docjson", doclist);
-                    in.putExtra("itemjson", item);
-                    c.startActivity(in);
-                   *//* Fragment fragment = new VisitPlanListFragment();
-                    if (fragment != null) {
-                        fragmentManager = ((AppCompatActivity)aca).getSupportFragmentManager();
-                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left).replace(R.id.fragmentContaineplanr, fragment).commit();
-                    }*//*
-                });*/
-
-
+            } else {
+                // Optionally handle null doctor name
+                holder.tv_name.setText("No Name");
             }
-            else {
 
-            }
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-
-
     }
+
 
     @Override
     public int getItemCount() {

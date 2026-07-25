@@ -1,11 +1,13 @@
 package com.creatrix.salessolution.Network;
+
 import com.creatrix.salessolution.Setting.AppSetting;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 public class RetrofitClientInstance {
 
     private static final String BASE_URL = AppSetting.newBASE_URL;
@@ -15,18 +17,28 @@ public class RetrofitClientInstance {
     /*   OkHttpClient client= new OkHttpClient()
                .writeTimeoutMillis(TimeUnit.MINUTES)*/
     public static Retrofit getRetrofitInstance() {
-        OkHttpClient clientz =new OkHttpClient.Builder()
-                .connectTimeout(10,TimeUnit.MINUTES)
-                .writeTimeout(10,TimeUnit.MINUTES)
-                .readTimeout(10,TimeUnit.MINUTES)
-                .build();
         if (retrofit == null) {
+
+            // 🟡 1. Create the logging interceptor
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BASIC); // Changed to BASIC to prevent OOM
+
+            // 🟡 2. Attach it to the OkHttpClient
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(logging)
+                    .connectTimeout(20, TimeUnit.SECONDS)
+                    .readTimeout(20, TimeUnit.SECONDS)
+                    .writeTimeout(20, TimeUnit.SECONDS)
+                    .build();
+
+            // 🟡 3. Build the Retrofit instance with the client
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
-                    .client(clientz)
+                    .client(client)
                     .build();
         }
+
         return retrofit;
     }
 }

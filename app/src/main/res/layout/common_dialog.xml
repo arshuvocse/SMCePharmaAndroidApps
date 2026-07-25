@@ -12,7 +12,7 @@
         android:background="@color/main_shadow"
         android:elevation="8dp"
         android:padding="10dp"
-        android:gravity="center"
+        android:gravity="center" android:textStyle="bold"
         android:text="Select Doctor"
         android:textColor="@color/black"
         android:textSize="16sp"

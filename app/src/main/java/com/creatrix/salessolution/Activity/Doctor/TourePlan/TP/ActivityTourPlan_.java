@@ -50,6 +50,8 @@ public class ActivityTourPlan_ extends AppCompatActivity implements ITP.View,Tou
     ActivityTourPlanBinding binding;
     PresenterTP presenterTP;
     SessionManagement session;
+
+
     int empId;
     ProgressDialog pd;
     TPAdapter mAdapter;

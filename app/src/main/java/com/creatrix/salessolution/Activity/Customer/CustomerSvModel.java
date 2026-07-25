@@ -6,6 +6,16 @@ import androidx.annotation.Keep;
 @Keep public class CustomerSvModel {
     int CustomerMasterId;
     String CustomerName;
+
+    public String getCustomerBSPCode() {
+        return CustomerBSPCode;
+    }
+
+    public void setCustomerBSPCode(String customerBSPCode) {
+        CustomerBSPCode = customerBSPCode;
+    }
+
+    String CustomerBSPCode;
     String ImageBase64String;
     String TradeLicenseImg;
     String Address;

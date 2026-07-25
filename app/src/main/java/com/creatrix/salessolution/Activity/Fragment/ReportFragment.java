@@ -38,6 +38,7 @@ import com.creatrix.salessolution.R;
 import com.creatrix.salessolution.Activity.SelfReports.ReportsDcrActivity;
 import com.creatrix.salessolution.UtilityHelper.SessionManagement;
 import com.creatrix.salessolution.UtilityHelper.SnackBarManagement;
+import com.creatrix.salessolution.WebView.SixbyTenReportActivity;
 import com.creatrix.salessolution.databinding.FragmentReportBinding;
 
 
@@ -118,6 +119,13 @@ public class ReportFragment extends Fragment {
 
             Intent i = new Intent(getActivity(), SalesReportActivity.class);
             i.putExtra("From","Order");
+            startActivity(i);
+            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
+        viewBinding.crdbtnsixten.setOnClickListener(v -> {
+
+
+            Intent i = new Intent(getActivity(), SixbyTenReportActivity.class);
             startActivity(i);
             requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });

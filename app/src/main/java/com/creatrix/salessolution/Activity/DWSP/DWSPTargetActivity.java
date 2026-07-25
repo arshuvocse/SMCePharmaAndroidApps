@@ -46,7 +46,7 @@ public class DWSPTargetActivity extends AppCompatActivity{
 
     @SuppressLint("SetJavaScriptEnabled")
     private void viewLoad(int userId) {
-        String urlBuilder = "http://13.76.141.111:456/DWSP/AMDayWiseDWSPSetup.aspx?EmpId="+userId;
+        String urlBuilder = "http://103.244.247.179:181/DWSP/AMDayWiseDWSPSetup.aspx?EmpId="+userId;
        // progressBar = ProgressDialog.show(DWSPTargetActivity.this, "Loading", "Please wait...");
         binding.webviewDwspTarget.getSettings().setJavaScriptEnabled(true);
         binding.webviewDwspTarget.setWebChromeClient(new WebChromeClient());

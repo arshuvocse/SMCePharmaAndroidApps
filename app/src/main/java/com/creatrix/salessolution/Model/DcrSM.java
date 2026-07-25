@@ -9,6 +9,16 @@ public class DcrSM {
 
     int DcrId;
     int DoctorId;
+
+    public String getTypeDcr() {
+        return TypeDcr;
+    }
+
+    public void setTypeDcr(String typeDcr) {
+        TypeDcr = typeDcr;
+    }
+
+    String TypeDcr;
     String DoctorName;
     String DcrDate;
     String EntryTime;
@@ -80,6 +90,15 @@ public class DcrSM {
 
     public void setVisitTypeName(String visitTypeName) {
         VisitTypeName = visitTypeName;
+    }
+    String Type;
+
+    public String getType() {
+        return Type;
+    }
+
+    public void setType(String type) {
+        Type = type;
     }
 
     public String getDoctorName() {

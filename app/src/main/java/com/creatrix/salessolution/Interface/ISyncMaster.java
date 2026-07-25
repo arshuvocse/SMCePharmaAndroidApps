@@ -53,6 +53,13 @@ public interface ISyncMaster {
         void cllExpenseType(int empId, int year,String role);
         void cllLeaveType(int empId, int year);
         void cllPrescriptionType(int empId, int year);
+
+        void cllDivision();
+
+        void cllDistrict();
+
+        void cllThana();
+
         void cllNonEffectivereason(int empId, int year);
         void cllTransportList(int empId, int year);
         void cllTourPurpose(int empId, int year);

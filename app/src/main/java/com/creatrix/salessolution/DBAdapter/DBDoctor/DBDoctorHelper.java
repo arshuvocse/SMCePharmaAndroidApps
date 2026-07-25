@@ -84,7 +84,7 @@ public class DBDoctorHelper {
         SQLiteDatabase database = dbHelperMain.getWritableDatabase();
         String docMasterQuerynll = "Select * from tblDoctorReport";
 
-        String parameter = " WHERE DoctorCode is not null ";
+        String parameter = " WHERE MarketId is not null ";
         if (!status.equals("Select")) {
             parameter = parameter + " AND  ActionStatus='" + status + "'";
         }
@@ -111,13 +111,13 @@ public class DBDoctorHelper {
         }
 
         if (!proId.equals("0")) {
-            parameter = parameter + " AND  MarketId=" + proId;
+            parameter = parameter + " AND  programtypeid=" + proId;
         }
         if (!docId.equals("0")) {
-            parameter = parameter + " AND  MarketId=" + docId;
+            parameter = parameter + " AND  doctortypeid=" + docId;
         }
         if (!smcId.equals("0")) {
-            parameter = parameter + " AND  MarketId=" + smcId;
+            parameter = parameter + " AND  smctypeid=" + smcId;
         }
 
         String mainparam = docMasterQuerynll + parameter;
@@ -151,7 +151,7 @@ public class DBDoctorHelper {
         ArrayList<DoctorListViewModel> docList = new ArrayList<>();
         SQLiteDatabase database = dbHelperMain.getWritableDatabase();
         String docQuery = "Select * from tblDoctorInfo";
-        String parameter = " WHERE DoctorCode is not null ";
+        String parameter = " WHERE DoctorId is not null ";
 
         if (!Gid.equals("0")) {
             parameter = parameter + " AND  GroupId=" + Gid;
@@ -243,6 +243,77 @@ public class DBDoctorHelper {
         }
         return docList;
     }
+
+    @SuppressLint("Range")
+    public ArrayList<DoctorListViewModel> getCustDoctorListFromSQLite(String typeParam) {
+
+        ArrayList<DoctorListViewModel> docList = new ArrayList<>();
+        SQLiteDatabase database = dbHelperMain.getWritableDatabase();
+
+        // Define base queries
+        String doctorQuery = "SELECT 'Doc' dType,\n" +
+                "    DoctorId,\n" +
+                "    DoctorName,\n" +
+                "    DoctorCode,\n" +
+                "    ChemberName,\n" +
+                "    DocContact,\n" +
+                "    DocTPDetailsId,\n" +
+                "    DoctorTypeName,\n" +
+                "    ProgramTypeName,\n" +
+                "    MarketName,\n" +
+                "    MarketCode\n" +
+                "FROM tblDoctorInfo";
+
+        String customerQuery = "SELECT 'Cust' dType,\n" +
+                "    CustomerMasterId AS DoctorId,\n" +
+                "    CustomerCode || '  :  ' || CustomerName AS DoctorName,\n" +
+                "    CustomerCode AS DoctorCode,\n" +
+                "    '' AS ChemberName,\n" +
+                "    '' AS DocContact,\n" +
+                "    0 AS DocTPDetailsId,\n" +
+                "    '' AS DoctorTypeName,\n" +
+                "    '' AS ProgramTypeName,\n" +
+                "    '' AS MarketName,\n" +
+                "    MarketCode\n" +
+                "FROM tblCustomerInfo";
+
+        // Final query based on typeParam
+        String finalQuery;
+        if ("Doc".equalsIgnoreCase(typeParam)) {
+            finalQuery = doctorQuery;
+        } else if ("Cust".equalsIgnoreCase(typeParam)) {
+            finalQuery = customerQuery;
+        } else {
+            finalQuery = doctorQuery ;
+        }
+
+        try {
+            Cursor cursor = database.rawQuery(finalQuery, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    DoctorListViewModel ddInfo = new DoctorListViewModel();
+                    ddInfo.setDoctorId(cursor.getInt(cursor.getColumnIndex("DoctorId")));
+                    ddInfo.setDoctorName(cursor.getString(cursor.getColumnIndex("DoctorName")));
+                    ddInfo.setDoctorCode(cursor.getString(cursor.getColumnIndex("DoctorCode")));
+                    ddInfo.setChemberName(cursor.getString(cursor.getColumnIndex("ChemberName")));
+                    ddInfo.setDocContact(cursor.getString(cursor.getColumnIndex("DocContact")));
+                    ddInfo.setDocTPDetailsId(cursor.getInt(cursor.getColumnIndex("DocTPDetailsId")));
+                    ddInfo.setDoctorTypeName(cursor.getString(cursor.getColumnIndex("DoctorTypeName")));
+                    ddInfo.setProgramTypeName(cursor.getString(cursor.getColumnIndex("ProgramTypeName")));
+                    ddInfo.setMarketName(cursor.getString(cursor.getColumnIndex("MarketName")));
+                    ddInfo.setMarketCode(cursor.getString(cursor.getColumnIndex("MarketCode")));
+                    docList.add(ddInfo);
+                } while (cursor.moveToNext());
+            }
+            cursor.close(); // Always close cursor
+        } catch (Exception exception) {
+            Log.e("DoctorDetails", exception.toString());
+            exception.printStackTrace();
+        }
+
+        return docList;
+    }
+
 
     @SuppressLint("Range")
     public ArrayList<DoctorBrand> getDoctorBrandListFromSQLite(int doctorId) {
@@ -653,6 +724,31 @@ public class DBDoctorHelper {
         ArrayList<DoctorChamberName> chamberList = new ArrayList<>();
         SQLiteDatabase database = dbHelperMain.getWritableDatabase();
         String desigQuery = "Select * from tblDoctor_ChembarName where DoctorId='" + docId + "' order by ChemberId desc";
+
+        try {
+            Cursor cursor;
+            cursor = database.rawQuery(desigQuery, null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    DoctorChamberName ddInfo = new DoctorChamberName();
+                    ddInfo.setChemberId(cursor.getInt(cursor.getColumnIndex("ChemberId")));
+                    ddInfo.setChemberName(cursor.getString(cursor.getColumnIndex("ChemberName")));
+
+                    chamberList.add(ddInfo);
+                }
+            }
+
+        } catch (Exception exception) {
+            Log.e("CampOrderDetails", exception.toString());
+            exception.printStackTrace();
+        }
+        return chamberList;
+    }
+    @SuppressLint("Range")
+    public ArrayList<DoctorChamberName> getCustomerChamberIdListFromSQLite(int docId) {
+        ArrayList<DoctorChamberName> chamberList = new ArrayList<>();
+        SQLiteDatabase database = dbHelperMain.getWritableDatabase();
+        String desigQuery = "Select CustomerMasterId  ChemberId, c.CustomerName ChemberName from tblcustomerinfo c where c.CustomerMasterId='" + docId + "'";
 
         try {
             Cursor cursor;

@@ -2,6 +2,7 @@ package com.creatrix.salessolution.Activity.Customer;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -20,17 +21,28 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -42,13 +54,20 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.creatrix.salessolution.Activity.Approval.DCR.DcrApprovalListActivity;
 import com.creatrix.salessolution.Activity.Customer.Approval.CustomerApprovalListActivity;
 import com.creatrix.salessolution.Activity.Customer.Approval.Model.CustomerApprovalList;
+import com.creatrix.salessolution.Activity.Doctor.TourePlan.TourPlanDetailsActivity;
 import com.creatrix.salessolution.Activity.MainDashboardActivity;
+import com.creatrix.salessolution.Activity.PersonInfoDAO;
 import com.creatrix.salessolution.DBAdapter.DBCrudHelper;
 import com.creatrix.salessolution.DBAdapter.DBDoctor.DBDoctorHelper;
+import com.creatrix.salessolution.Interface.IBangladesh;
 import com.creatrix.salessolution.Interface.IMarketStracture;
+import com.creatrix.salessolution.Model.Customer;
 import com.creatrix.salessolution.Model.CustomerType;
+import com.creatrix.salessolution.Model.DistrictVM;
+import com.creatrix.salessolution.Model.DivisionVM;
 import com.creatrix.salessolution.Model.Doctor.ProgramType;
 import com.creatrix.salessolution.Model.MarketStructure.StructureTable.Area;
 import com.creatrix.salessolution.Model.MarketStructure.StructureTable.Group;
@@ -58,7 +77,14 @@ import com.creatrix.salessolution.Model.MarketStructure.StructureTable.SubTerito
 import com.creatrix.salessolution.Model.MarketStructure.StructureTable.Teritorry;
 import com.creatrix.salessolution.Model.ModelProviderType;
 import com.creatrix.salessolution.Model.ModelSMCType;
+import com.creatrix.salessolution.Model.ResultInfo;
 import com.creatrix.salessolution.Model.StationType;
+import com.creatrix.salessolution.Model.ThanaVM;
+import com.creatrix.salessolution.Model.TourPlanViewModel;
+import com.creatrix.salessolution.Network.ApiCustomerCall;
+import com.creatrix.salessolution.Network.RetrofitClientInstance;
+import com.creatrix.salessolution.Network.RetrofitClientInstanceIntegration;
+import com.creatrix.salessolution.Presenter.BangladehPresenter;
 import com.creatrix.salessolution.Presenter.MarketStructurePresenter;
 import com.creatrix.salessolution.R;
 import com.creatrix.salessolution.Services.Constants;
@@ -68,6 +94,8 @@ import com.creatrix.salessolution.UtilityHelper.SessionManagement;
 import com.creatrix.salessolution.UtilityHelper.SnackBarManagement;
 import com.creatrix.salessolution.UtilityHelper.ToastManagment;
 import com.creatrix.salessolution.databinding.ActivityCustomerBinding;
+import com.creatrix.salessolution.databinding.DialogSelectLocationBinding;
+import com.creatrix.salessolution.databinding.PopTourplanAddMarketwiseBinding;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.gson.Gson;
@@ -77,6 +105,8 @@ import org.w3c.dom.Text;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -84,8 +114,17 @@ import java.util.Locale;
 import static com.creatrix.salessolution.Activity.Attendance.AttendanceActivity.MY_PERMISSIONS_REQUEST_LOCATION;
 
 import id.zelory.compressor.Compressor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class CustomerActivity extends AppCompatActivity implements LocationListener, ICustomerAdd.View, IMarketStracture.View {
+public class CustomerActivity extends AppCompatActivity implements LocationListener, ICustomerAdd.View, IMarketStracture.View, IBangladesh.View {
+    private static final String INTEGRATION_USER_ID = "SMCeAdmin";
+    private static final String INTEGRATION_PASS = "Smc@ePharma";
+    int   selectedDiviId, selectedDistId, selectedThanaId;
+    String selectedThanaName = "";
+    DialogSelectLocationBinding selectLocationBinding;
+    Dialog popupTPP;
     private static final int PERMISSION_REQUEST_CODE = 200;
     public static final int PICK_IMAGE = 1;
     public static final int PICK_TIMAGE = 2;
@@ -96,6 +135,8 @@ public class CustomerActivity extends AppCompatActivity implements LocationListe
     ActivityCustomerBinding viewBinding;
     ICustomerAdd.Presenter presenter;
     IMarketStracture.Presenter mkpresenter;
+    IBangladesh.Presenter bdpresenter;
+
     ProgressDialog pd;
 
 
@@ -135,12 +176,18 @@ public class CustomerActivity extends AppCompatActivity implements LocationListe
         viewBinding.address.setFilters(new InputFilter[]{filter});
         viewBinding.cmistOwnerName.setFilters(new InputFilter[]{filter});
         viewBinding.cmistTradeLicense.setFilters(new InputFilter[]{filter});
+        viewBinding.changeptype.setOnClickListener(v -> showSelectDialog());
 
         // dbCrudHelper = new DBCrudHelper(CustomerActivity.this);
         dbDoctor = new DBDoctorHelper(CustomerActivity.this);
         dbCrudHelper = new DBCrudHelper(CustomerActivity.this);
         presenter = new CustomerPresenter(this, CustomerActivity.this);
         mkpresenter = new MarketStructurePresenter(this, CustomerActivity.this);
+        bdpresenter = new BangladehPresenter(this, CustomerActivity.this);
+
+
+
+        popup_tpp();
         viewBinding.toolbarCustom.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -320,6 +367,71 @@ public class CustomerActivity extends AppCompatActivity implements LocationListe
                         }
                     });
 
+
+//                    viewBinding.customerMobile.addTextChangedListener(new TextWatcher() {
+//                        @Override
+//                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//                            // No action needed
+//                        }
+//
+//                        @Override
+//                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                            if (s != null && s.length() == 11) {
+//                              //  Toast.makeText(CustomerActivity.this, "১১ ডিজিট দিয়েছেন", Toast.LENGTH_SHORT).show();
+//
+//                                ApiCustomerCall service = RetrofitClientInstance.getRetrofitInstance()
+//                                        .create(ApiCustomerCall.class);
+//
+//                                Call<Customer> call = service.GetCustomerByUserByMobileNo(
+//                                        empId, viewBinding.customerMobile.getText().toString()
+//                                );
+//
+//                                call.enqueue(new Callback<Customer>() {
+//                                    @Override
+//                                    public void onResponse(Call<Customer> call, Response<Customer> response) {
+//                                        if (response.isSuccessful()) {
+//                                            Customer customer = response.body();
+//                                            if (customer != null) {
+//                                                // ✅ Customer found
+//                                                Toast.makeText(CustomerActivity.this,
+//                                                        "Customer পাওয়া গেছে: " + customer.getCustomerName(),
+//                                                        Toast.LENGTH_SHORT).show();
+//
+//                                                viewBinding.customerName.setText(customer.getCustomerName());
+//                                                viewBinding.address.setText(customer.getAddress());
+//                                                viewBinding.cmistOwnerName.setText(customer.getRoute());
+//
+//                                                // TODO: populate UI with customer data
+//                                            } else {
+//                                                // ✅ No customer found
+//                                                Toast.makeText(CustomerActivity.this,
+//                                                        "কোনো কাস্টমার পাওয়া যায়নি",
+//                                                        Toast.LENGTH_SHORT).show();
+//                                            }
+//                                        } else {
+//                                            Toast.makeText(CustomerActivity.this,
+//                                                    "Server response failed",
+//                                                    Toast.LENGTH_SHORT).show();
+//                                        }
+//                                    }
+//
+//                                    @Override
+//                                    public void onFailure(Call<Customer> call, Throwable t) {
+//                                        Toast.makeText(CustomerActivity.this,
+//                                                "API Call ব্যর্থ: " + t.getMessage(),
+//                                                Toast.LENGTH_SHORT).show();
+//                                    }
+//                                });
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void afterTextChanged(Editable s) {
+//                            // No action needed
+//                        }
+//                    });
+
+
                     viewBinding.btnSubmit.setOnClickListener(v -> {
                         String img_str = null;
                         try {
@@ -365,6 +477,7 @@ public class CustomerActivity extends AppCompatActivity implements LocationListe
                             SnackBarManagement._warning_CustomMessage(viewBinding.masterLayoutId, "Address is required");
                             return;
                         }
+
                         if (TextUtils.isEmpty(viewBinding.cmistOwnerName.getText().toString())) {
                             SnackBarManagement._warning_CustomMessage(viewBinding.masterLayoutId, "Owner Name is required");
                             return;
@@ -392,6 +505,7 @@ public class CustomerActivity extends AppCompatActivity implements LocationListe
                 break;
         }
         viewBinding.camera.setOnClickListener(v -> {
+                popupTPP.hide();
             if (ContextCompat.checkSelfPermission(CustomerActivity.this,
                     Manifest.permission.CAMERA)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -412,6 +526,7 @@ public class CustomerActivity extends AppCompatActivity implements LocationListe
             }
         });
         viewBinding.tcamera.setOnClickListener(v -> {
+            popupTPP.hide();
             if (ContextCompat.checkSelfPermission(CustomerActivity.this,
                     Manifest.permission.CAMERA)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -432,6 +547,8 @@ public class CustomerActivity extends AppCompatActivity implements LocationListe
                         PERMISSION_REQUEST_CODE);
             }
         });
+
+
     }
     private void setupEdit(String roleType, int empId, CustomerApprovalList cal) {
         switch (roleType) {
@@ -669,6 +786,200 @@ public class CustomerActivity extends AppCompatActivity implements LocationListe
             SaveCustomer(custmasterid, empId, edit_img_str, edit_timg_str, "CustEdit");
         });
     }
+
+
+
+    private void popup_tpp() {
+        popupTPP = new Dialog(CustomerActivity.this);
+        popupTPP.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        popupTPP.setCancelable(true);
+        selectLocationBinding = DialogSelectLocationBinding.inflate(LayoutInflater.from(CustomerActivity.this));
+        //popupDoctor.setContentView(popupView);
+        popupTPP.setContentView(selectLocationBinding.getRoot());
+        // popupTPP.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        popupTPP.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        //Role wise spinner populate
+        try {
+//            switch (roleType) {
+//                case "MIO":
+//                    pbinding.regiondiv.setVisibility(View.GONE);
+//                    pbinding.areadiv.setVisibility(View.GONE);
+//                    mpresenter.GetTeritoryLocal(0);
+//                    break;
+//                case "AM":
+//                    pbinding.regiondiv.setVisibility(View.GONE);
+//                    pbinding.areadiv.setVisibility(View.VISIBLE);
+//                    mpresenter.GetAreaLocal(0);
+//                    break;
+//                case "DZSM":
+//                case "NSM":
+//                case "Admin":
+//                    pbinding.regiondiv.setVisibility(View.VISIBLE);
+//                    pbinding.areadiv.setVisibility(View.VISIBLE);
+//                    mpresenter.GetRegionLocal(0);
+//                    break;
+
+//            }
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+//        selectLocationBinding.tourDate.setText(ddy);
+//        LoadTourPurpose(pbinding.tourPlanPurposeSpinner);
+        selectLocationBinding.btnSearch.setOnClickListener(v -> searchProviderInfo());
+        selectLocationBinding.btnSelect.setOnClickListener(v -> {
+            PersonChoiceAdapter adapter = (PersonChoiceAdapter) selectLocationBinding.lvPeople.getAdapter();
+            if (adapter == null) {
+                Toast.makeText(CustomerActivity.this, "Search and select a provider first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            PersonInfoDAO selected = adapter.getSelectedPerson(); // নিজের getter দিয়ে selected পাবেন
+
+            if (selected != null) {
+                // Text বানিয়ে changeptype এ দেখান
+                String showText = selected.oneLine();
+                viewBinding.changeptype.setText(showText);
+                viewBinding.customerMobile.setText(selected.Mobile);
+                viewBinding.customerName.setText(selected.Name);
+                viewBinding.address.setText(selected.Address);
+                viewBinding.cmistOwnerName.setText(selected.OwnerName);
+                if ("BSP".equals(selected.ProviderType)) {
+
+
+                    viewBinding.ptypeSpinner.setSelection(getIndex(viewBinding.ptypeSpinner, "Blue Star"));
+                }
+
+  else if ("GSP".equals(selected.ProviderType)) {
+
+
+                    viewBinding.ptypeSpinner.setSelection(getIndex(viewBinding.ptypeSpinner, "Green Star"));
+                }
+                else  if ("PSP".equals(selected.ProviderType)) {
+
+
+                    viewBinding.ptypeSpinner.setSelection(getIndex(viewBinding.ptypeSpinner, "Pink Star"));
+                }
+else {
+                    viewBinding.ptypeSpinner.setSelection(getIndex(viewBinding.ptypeSpinner, "General"));
+
+                }
+
+
+            } else {
+                // কিছু select না করলে fallback
+                viewBinding.changeptype.setText("Nothing selected");
+            }
+            popupTPP.hide();
+
+        });
+        selectLocationBinding.btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupTPP.cancel();
+            }
+        });
+
+        bdpresenter.GetDivisionLocal();
+        //popup for tp details recyclerview
+//        pbinding.tpsubmitBnt.setOnClickListener(v -> {
+//            try {
+//                TourPlanViewModel tv = new TourPlanViewModel();
+//                tv.setTourPlanId(0);
+//                tv.setMarketId(selectedMarket);
+//                tv.setMarketName(selectedMarketName);
+//                tv.setTPId(selectedTPP);
+//                tv.setEmpInfoId(empId);
+//                tv.setTourPlanDate(pbinding.tourDate.getText().toString());
+//                tv.setTPName(selectedTPPName);
+//                if (tpl.size() == 0) {
+//                    tv.setSerialNo(1);
+//                } else {
+//                    tv.setSerialNo(tpl.size() + 1);
+//                }
+//                tv.setaCustomerMasterList(chkCustomerList);
+//                tpl.add(tv);
+//                SetInRecyclerviewData(tpl);
+//                adapter.notifyDataSetChanged();
+//
+//                // chkCustomerList.clear();
+//
+//            } catch (Exception exception) {
+//                exception.printStackTrace();
+//            }
+//            popupTPP.dismiss();
+//        });
+    }
+
+    private void showSelectDialog() {
+
+        popup_tpp();
+
+        popupTPP.show();
+//        View dialogView = getLayoutInflater().inflate(R.layout.dialog_select_location, null);
+//
+//        Spinner spDivision = dialogView.findViewById(R.id.spDivision);
+//        Spinner spDistrict = dialogView.findViewById(R.id.spDistrict);
+//        ListView lvPeople = dialogView.findViewById(R.id.lvPeople);
+//    Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+//      Button btnSelect = dialogView.findViewById(R.id.btnSelect);
+////
+//        // Demo data — নিজের ডেটা দিন
+//        //String[] divisions = {"Dhaka", "Khulna", "Rajshahi"};
+//        String[] kushtiaDistricts = {"Kushtia", "Jashore", "Natore"};
+//
+////        ArrayAdapter<String> divAdapter = new ArrayAdapter<>(this,
+////                android.R.layout.simple_spinner_dropdown_item, divisions);
+////        spDivision.setAdapter(divAdapter);
+//
+//
+//
+//        ArrayAdapter<String> distAdapter = new ArrayAdapter<>(this,
+//                android.R.layout.simple_spinner_dropdown_item, kushtiaDistricts);
+//        spDistrict.setAdapter(distAdapter);
+//
+//        List<PersonInfoDAO> people = new ArrayList<>();
+//        people.add(new PersonInfoDAO("Hosneara Pervin","Boro Bazar","01705159771","Kushtia Sadar"));
+//        people.add(new PersonInfoDAO("Abdul Karim","Station Road","01700000001","Kushtia Sadar"));
+//        people.add(new PersonInfoDAO("Rina Akter","Mirpur","01700000002","Mirpur"));
+//        people.add(new PersonInfoDAO("Sujon Mia","Kumarkhali","01700000003","Kumarkhali"));
+//
+//        PersonChoiceAdapter adapter = new PersonChoiceAdapter(this, people);
+//        lvPeople.setAdapter(adapter);
+//
+//        AlertDialog dialog = new AlertDialog.Builder(this)
+//                .setView(dialogView)
+//                .setCancelable(false)
+//                .create();
+////
+//        btnCancel.setOnClickListener(v -> dialog.dismiss());
+////
+//        btnSelect.setOnClickListener(v -> {
+//            int idx = adapter.getSelectedIndex();
+//            if (idx >= 0) {
+//                PersonInfoDAO sel = people.get(idx);
+//                // এখানে যা দরকার করুন (UI তে দেখানো/ভ্যালু রিটার্ন ইত্যাদি)
+//                Toast.makeText(this, "Selected: " + sel.oneLine(), Toast.LENGTH_SHORT).show();
+//            } else {
+//                Toast.makeText(this, "Please select one", Toast.LENGTH_SHORT).show();
+//            }
+//            dialog.dismiss();
+//        });
+//
+//        dialog.show();
+//        if (dialog.getWindow() != null) {
+//            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
+//                    ViewGroup.LayoutParams.WRAP_CONTENT);
+//        }
+//
+//         //Division অনুযায়ী District আপডেট করতে চাইলে:
+//        spDivision.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                // position দেখে নতুন district list সেট করুন
+//                // spDistrict.setAdapter(new ArrayAdapter<>(...));
+//            }
+//            @Override public void onNothingSelected(AdapterView<?> parent) {}
+//        });
+    }
     private void SaveCustomer(int custmasterid, int empId, String img_str, String timg_str, String who) {
         CustomerSvModel csm = new CustomerSvModel();
         try {
@@ -687,18 +998,27 @@ public class CustomerActivity extends AppCompatActivity implements LocationListe
 
             csm.setTradeLicenseImg(timg_str);
             csm.setTermOfPayment("Cash");
+            int ptypeId=0;
+          try {
+              ModelProviderType ptype = (ModelProviderType) viewBinding.ptypeSpinner.getSelectedItem();
+              //ProgramType ptype = (ProgramType) viewBinding.ptypeSpinner.getSelectedItem();
+                ptypeId = ptype.getProviderTypeId();
+          }catch (Exception ex){
 
-            ModelProviderType ptype = (ModelProviderType) viewBinding.ptypeSpinner.getSelectedItem();
-            //ProgramType ptype = (ProgramType) viewBinding.ptypeSpinner.getSelectedItem();
-            int ptypeId = ptype.getProviderTypeId();
-
+          }
+            int smctypeId =0;
+            try {
             ModelSMCType smctype = (ModelSMCType) viewBinding.smcTypeSpinner.getSelectedItem();
-            int smctypeId = smctype.getSMCTypeId();
+              smctypeId = smctype.getSMCTypeId();
+            }catch (Exception ex){
+
+            }
 
             csm.setProgramTypeId(ptypeId);
             csm.setSMCTypeId(smctypeId);
             csm.setCustomerName(viewBinding.customerName.getText().toString());
             csm.setAddress(viewBinding.address.getText().toString());
+            csm.setCustomerBSPCode(viewBinding.changeptype.getText().toString());
             csm.setCellNo(viewBinding.customerMobile.getText().toString());
             csm.setConPerson(viewBinding.cmistOwnerName.getText().toString());
             csm.setVoterID(viewBinding.cmistNid.getText().toString());
@@ -909,6 +1229,10 @@ public class CustomerActivity extends AppCompatActivity implements LocationListe
 
     @Override
     public void onProviderType(List<ModelProviderType> ptype) {
+
+        ModelProviderType a = new ModelProviderType();
+        a.setProviderType("Select Provider Type");
+        ptype.add(0, a);
         ArrayAdapter<ModelProviderType> dataAdapter = new ArrayAdapter<>(CustomerActivity.this, android.R.layout.simple_spinner_item, ptype);// dbDoctor.getProgramTypeListFromSQLite(0));
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         viewBinding.ptypeSpinner.setAdapter(dataAdapter);
@@ -1197,4 +1521,175 @@ public class CustomerActivity extends AppCompatActivity implements LocationListe
             return null;
         }
     };
+
+    @Override
+    public void vDivL(List<DivisionVM> divList) {
+        try {
+            if (divList != null) {
+                DivisionVM a = new DivisionVM();
+                a.setDivisionName("Select Division");
+                divList.add(0, a);
+                ArrayAdapter<DivisionVM> dataAdapter = new ArrayAdapter<>(CustomerActivity.this, android.R.layout.simple_spinner_item, divList);
+                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                selectLocationBinding.spDivision.setAdapter(dataAdapter);
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        selectLocationBinding.spDivision.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                DivisionVM area = (DivisionVM) parent.getSelectedItem();
+                selectedDiviId = area.getDivisionId();
+                selectedDistId = 0;
+                selectedThanaId = 0;
+                selectedThanaName = "";
+                selectLocationBinding.lvPeople.setAdapter(null);
+                bdpresenter.GetDistrictLocal(selectedDiviId);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    @Override
+    public void vDisL(List<DistrictVM> disList) {
+        try {
+            if (disList != null) {
+                DistrictVM a = new DistrictVM();
+                a.setDistrictName("Select District");
+                disList.add(0, a);
+                ArrayAdapter<DistrictVM> dataAdapter = new ArrayAdapter<>(CustomerActivity.this, android.R.layout.simple_spinner_item, disList);
+                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                selectLocationBinding.spDistrict.setAdapter(dataAdapter);
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        selectLocationBinding.spDistrict.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                DistrictVM area = (DistrictVM) parent.getSelectedItem();
+                selectedDistId = area.getDistrictId();
+                selectedThanaId = 0;
+                selectedThanaName = "";
+                selectLocationBinding.lvPeople.setAdapter(null);
+
+                bdpresenter.GetThanaLocal(selectedDistId);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
+
+
+    }
+
+    @Override
+    public void vThanaL(List<ThanaVM> thanaList) {
+        try {
+            if (thanaList != null) {
+                ThanaVM a = new ThanaVM();
+                a.setThanaName("Select Upazila....");
+                thanaList.add(0, a);
+                ArrayAdapter<ThanaVM> dataAdapter = new ArrayAdapter<>(CustomerActivity.this, android.R.layout.simple_spinner_item, thanaList);
+                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                selectLocationBinding.spThana.setAdapter(dataAdapter);
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        selectLocationBinding.spThana.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ThanaVM area = (ThanaVM) parent.getSelectedItem();
+                selectedThanaId = area.getThanaId();
+                selectedThanaName = selectedThanaId == 0 ? "" : area.getThanaName();
+                selectLocationBinding.lvPeople.setAdapter(null);
+/*
+
+                
+                    @Override
+                    public void onResponse(Call<List<PersonInfoDAO>> call, Response<List<PersonInfoDAO>> response) {
+                        // ৩ সেকেন্ড দেরি করে হ্যান্ডেল করা হচ্ছে
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            progressDoalog.dismiss();
+                            if (response.isSuccessful() && response.body() != null) {
+                                List<PersonInfoDAO> people = response.body();
+                                if (people.size() > 0) {
+                                    PersonChoiceAdapter adapter = new PersonChoiceAdapter(CustomerActivity.this, people);
+                                    selectLocationBinding.lvPeople.setAdapter(adapter);
+                                } else {
+                                    selectLocationBinding.lvPeople.setAdapter(null);
+                                    Toast.makeText(CustomerActivity.this, "No data found", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                selectLocationBinding.lvPeople.setAdapter(null);
+                                Toast.makeText(CustomerActivity.this, "No data found", Toast.LENGTH_SHORT).show();
+                            }
+                        }, 3000); // ৩ সেকেন্ড delay
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<PersonInfoDAO>> call, Throwable t) {
+                        progressDoalog.dismiss();
+                        Toast.makeText(CustomerActivity.this, "Failed to load data", Toast.LENGTH_SHORT).show();
+                        Log.e("API", t.toString());
+                    }
+                });
+*/
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
+
+    }
+
+    private void searchProviderInfo() {
+        if (selectedDiviId == 0 || selectedDistId == 0 || selectedThanaId == 0 || TextUtils.isEmpty(selectedThanaName)) {
+            Toast.makeText(this, "Please select division, district and upazila", Toast.LENGTH_SHORT).show();
+            selectLocationBinding.lvPeople.setAdapter(null);
+            return;
+        }
+
+        ProgressDialog progressDoalog = new ProgressDialog(CustomerActivity.this);
+        progressDoalog.setMessage("Data Loading.... Please wait");
+        progressDoalog.show();
+        progressDoalog.setCanceledOnTouchOutside(false);
+
+        ApiCustomerCall service = RetrofitClientInstanceIntegration.getRetrofitInstance().create(ApiCustomerCall.class);
+        Call<List<PersonInfoDAO>> call = service.GetProviderInfoIntrigration(
+                selectedThanaName.trim(),
+                INTEGRATION_USER_ID,
+                INTEGRATION_PASS
+        );
+
+        call.enqueue(new Callback<List<PersonInfoDAO>>() {
+            @Override
+            public void onResponse(Call<List<PersonInfoDAO>> call, Response<List<PersonInfoDAO>> response) {
+                progressDoalog.dismiss();
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    PersonChoiceAdapter adapter = new PersonChoiceAdapter(CustomerActivity.this, response.body());
+                    selectLocationBinding.lvPeople.setAdapter(adapter);
+                    return;
+                }
+
+                selectLocationBinding.lvPeople.setAdapter(null);
+                Toast.makeText(CustomerActivity.this, "No data found", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<List<PersonInfoDAO>> call, Throwable t) {
+                progressDoalog.dismiss();
+                selectLocationBinding.lvPeople.setAdapter(null);
+                Toast.makeText(CustomerActivity.this, "Failed to load data", Toast.LENGTH_SHORT).show();
+                Log.e("IntegrationAPI", "Provider search failed", t);
+            }
+        });
+    }
 }

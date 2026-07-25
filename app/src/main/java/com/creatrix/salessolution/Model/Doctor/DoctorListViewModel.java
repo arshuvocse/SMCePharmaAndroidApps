@@ -6,9 +6,29 @@ public class DoctorListViewModel {
     int DoctorId;
     String DoctorCode;
     String DoctorName;
+
+    public String getdType() {
+        return dType;
+    }
+
+    public void setdType(String dType) {
+        this.dType = dType;
+    }
+
+    String dType;
     String ChamberAddress;
     String ChemberName;
+    String Type;
     String DocContact;
+
+    public String getType() {
+        return Type;
+    }
+
+    public void setType(String type) {
+        Type = type;
+    }
+
     int DocTPDetailsId;
     String DoctorTypeName;
     String ProgramTypeName;

@@ -18,6 +18,7 @@ public interface IDCR {
     interface Presenter{
         void GetVisitType();
         void GetChamber(int doctorId);
+        void GetCustomerChamber(int doctorId);
         void GetGiftProduct(String empId);
         void GetDoctorBrand(int empId);
         void GetSampleProduct(String empId);

@@ -48,7 +48,7 @@ ActivityLedgerReportBinding  binding;
 
     @SuppressLint("SetJavaScriptEnabled")
     private void viewLoad(int userId) {
-        String urlBuilder = "http://13.76.141.111:456/SInventory_UI/CustomerLedgerReportApps.aspx?EMPID="+userId;
+        String urlBuilder = "http://103.244.247.179:181/SInventory_UI/CustomerLedgerReportApps.aspx?EMPID="+userId;
         // progressBar = ProgressDialog.show(DWSPTargetActivity.this, "Loading", "Please wait...");
         binding.webviewDwspTarget.getSettings().setJavaScriptEnabled(true);
         binding.webviewDwspTarget.setWebChromeClient(new WebChromeClient());

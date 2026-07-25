@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:id="@+id/aMasterlayout"
+    android:layout_height="match_parent"
+    tools:context=".Activity.Customer.CustomerEditListActivity">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_custom"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/main"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:theme="@style/ToolbarTheme">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato"
+            android:text="@string/tag_customer_editlist"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/cfilter"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:src="@drawable/ic_filter_white"
+            tools:ignore="SpeakableTextPresentCheck" />
+      </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/lightGrey"
+        android:orientation="vertical">
+
+      <EditText
+          android:id="@+id/searchCustomer"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="10dp"
+          android:background="@color/white"
+          android:elevation="10dp"
+          android:inputType="text"
+          android:hint="@string/tag_search_customer"
+          android:paddingLeft="10dp"
+          android:paddingTop="15dp"
+          android:paddingRight="10dp"
+          android:paddingBottom="10dp"
+          android:fontFamily="@font/latoregular"
+          android:textSize="16sp"
+          android:windowSoftInputMode="stateHidden|adjustResize" />
+
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@color/white"
+          android:padding="4dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:fontFamily="@font/lato_bold"
+              android:text="@string/tag_count"
+              android:textSize="16sp"
+              android:textColor="@color/main" />
+
+          <TextView
+              android:id="@+id/count"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:fontFamily="@font/lato_bold"
+              android:text=""
+              android:textSize="16sp"
+              android:textColor="@color/main" />
+        </LinearLayout>
+      </RelativeLayout>
+
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/recycler_view"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:clipToPadding="false"
+          android:paddingLeft="5dp"
+          android:paddingRight="5dp"
+          android:paddingBottom="60dp"
+          android:scrollbars="vertical"
+
+          />
+
+
+    </LinearLayout>
+
+
+  </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -62,6 +62,15 @@ public class DCRPresenter implements IDCR.Presenter {
         }
 
     }
+      @Override
+    public void GetCustomerChamber(int doctorId) {
+        try{
+            view.OnChamberGet(dhelper.getCustomerChamberIdListFromSQLite(doctorId));
+
+        }catch (Exception ex){
+        }
+
+    }
 
     @Override
     public void GetGiftProduct(String empId) {
@@ -94,7 +103,12 @@ public class DCRPresenter implements IDCR.Presenter {
     @Override
     public void SaveDCR(DcrSM aInfo) {
         ProgressDialog progressDoalog = new ProgressDialog(context);
-        progressDoalog.setMessage("DCR is Saving.... Please wait");
+        String visitType = "DCR";
+        if ("ccrAdapter".equalsIgnoreCase(aInfo.getType())) {
+            visitType = "CVR";
+        }
+
+        progressDoalog.setMessage(visitType+" is Saving.... Please wait");
         progressDoalog.show();
         progressDoalog.setCanceledOnTouchOutside(false);
         try{
@@ -107,14 +121,14 @@ public class DCRPresenter implements IDCR.Presenter {
                     ResultInfo info =response.body();
                     if(info !=null){
                         if(info.getSuccess() == true){
-                            view.OnDcrSaveSuccess("DCR Successfully Submitted");
+                            view.OnDcrSaveSuccess("Successfully Submitted");
                         }else if(info.getValiCheck()==true)
                         {
                             view.OnDcrSaveSuccess("Insufficient");
                         }
                         else {
                            // view.OnDcrSaveError("Some error occurred... Please try again");
-                            Toast.makeText(context, "Some error occurred... Please try again", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Already Added!l", Toast.LENGTH_SHORT).show();
                         }
 
                     }else{

@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface IBangladesh {
     interface  Presenter{
-        void GetDivisionLocal(/*List<DivisionVM> divList*/);
+        void GetDivisionLocal();
         void GetDistrictLocal(int divid);
         void GetThanaLocal(int disid);
 

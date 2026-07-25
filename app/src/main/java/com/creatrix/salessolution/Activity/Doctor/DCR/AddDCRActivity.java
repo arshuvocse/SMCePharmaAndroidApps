@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.creatrix.salessolution.Activity.Customer.CustomerActivity;
 import com.creatrix.salessolution.Activity.Doctor.DoctorDashboardActivity;
+import com.creatrix.salessolution.Activity.TodaysTaskActivity;
 import com.creatrix.salessolution.DBAdapter.DBCrudHelper;
 import com.creatrix.salessolution.Interface.IDCR;
 import com.creatrix.salessolution.Model.DcrSM;
@@ -53,6 +54,7 @@ import com.creatrix.salessolution.UtilityHelper.NetworkInformation;
 import com.creatrix.salessolution.UtilityHelper.SessionManagement;
 import com.creatrix.salessolution.UtilityHelper.SnackBarManagement;
 import com.creatrix.salessolution.databinding.ActivityAddDCRBinding;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -122,18 +124,52 @@ public class AddDCRActivity extends AppCompatActivity implements LocationListene
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
             super.onLocationResult(locationResult);
-            locationResult.getLastLocation();
 
-            double latitude = locationResult.getLastLocation().getLatitude();
-            double longitude = locationResult.getLastLocation().getLongitude();
-            setStreetAddress = getCompleteAddressString(latitude, longitude);
+            if (locationResult == null) return;
+
+            android.location.Location loc = locationResult.getLastLocation();
+            if (loc == null) return; // can be null on first hit or if provider cold-starts
+
+            double latitude = loc.getLatitude();
+            double longitude = loc.getLongitude();
+
+            // Defensive: get address may throw or be slow; wrap it
+            try {
+                setStreetAddress = getCompleteAddressString(latitude, longitude);
+            } catch (Exception ignored) {
+                // keep going even if reverse-geocode fails
+            }
+
             lat = String.valueOf(latitude);
             lon = String.valueOf(longitude);
-            binding.latlon.setText(lat + "," + lon);
 
+            if (binding != null && binding.latlon != null) {
+                binding.latlon.setText(lat + "," + lon);
+            }
         }
     };
+    private static final String SRC_TODAY = "ToDayDoclitAdapter";
+    private static final String SRC_CCR   = "ccrAdapter";
+    private void navigateHome() {
+        String who = (Constants.WHO == null) ? "" : Constants.WHO;
 
+        Class<?> target = (SRC_TODAY.equals(who) || SRC_CCR.equals(who))
+                ? TodaysTaskActivity.class
+                : DoctorDashboardActivity.class;
+
+        Intent i = new Intent(AddDCRActivity.this, target);
+        // Make back not return to this page
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        finish(); // ensure this activity is closed
+    }
+
+    @Override
+    public void onBackPressed() {
+        // same behavior as toolbar click
+        navigateHome();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,7 +177,8 @@ public class AddDCRActivity extends AppCompatActivity implements LocationListene
         //setContentView(R.layout.activity_add_d_c_r);
         setContentView(binding.getRoot());
         dbCrudHelper = new DBCrudHelper(AddDCRActivity.this);
-        binding.toolbarCustom.setNavigationOnClickListener(v -> finish());
+        binding.toolbarCustom.setOnClickListener(v -> navigateHome());
+
         //imgaeView = findViewById(R.id.imgaeView);
         presenter = new DCRPresenter(this, this);
         session = new SessionManagement(getApplicationContext());
@@ -279,7 +316,45 @@ public class AddDCRActivity extends AppCompatActivity implements LocationListene
                     presenter.GetChamber(aInfoData.getDoctorId());
                     presenter.GetGiftProduct(empId);
                     presenter.GetSampleProduct(empId);
-                    presenter.GetDoctorBrand(aInfoData.getDoctorId());
+                   try {
+                       presenter.GetDoctorBrand(aInfoData.getDoctorId());
+                   }catch(Exception e) {
+
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+                break;
+            case "ToDayDoclitAdapter":
+                binding.dcrdate.setText(new SimpleDateFormat("dd-MMM-yyyy hh:mm a", Locale.getDefault()).format(new Date()));
+                try {
+                    presenter.GetVisitType();
+                    presenter.GetChamber(aInfoData.getDoctorId());
+                    presenter.GetGiftProduct(empId);
+                    presenter.GetSampleProduct(empId);
+                   try {
+                       presenter.GetDoctorBrand(aInfoData.getDoctorId());
+                   }catch(Exception e) {
+
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+                break;
+            case "ccrAdapter":
+
+                binding.toolbarTitle.setText("Add CVR");
+            binding.dcrdate.setText(new SimpleDateFormat("dd-MMM-yyyy hh:mm a", Locale.getDefault()).format(new Date()));
+                try {
+                    presenter.GetVisitType();
+                    presenter.GetCustomerChamber(aInfoData.getDoctorId());
+                    presenter.GetGiftProduct(empId);
+                    presenter.GetSampleProduct(empId);
+                   try {
+                       presenter.GetDoctorBrand(aInfoData.getDoctorId());
+                   }catch(Exception e) {
+
+                    }
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
@@ -340,6 +415,13 @@ public class AddDCRActivity extends AppCompatActivity implements LocationListene
             binding.latlon.setText("Loading...");
             getCLocation();
         });
+
+        try {
+            binding.latlon.setText("Loading...");
+            getCLocation();
+        }catch (Exception e){
+
+        }
     }
 
     private void checkLocationPermission() {
@@ -406,36 +488,113 @@ public class AddDCRActivity extends AppCompatActivity implements LocationListene
         }
     }
 
+    // Request code (only used if we need to ask for permission here)
+    private static final int REQ_LOCATION = 1001;
     public void getCLocation() {
         try {
-            LocationRequest locationRequest = new LocationRequest();
-            // locationRequest.setInterval(300000);
-            locationRequest.setInterval(300000);
-            locationRequest.setFastestInterval(180000);
-            locationRequest.setSmallestDisplacement(10.2f);
-            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+            // ---- Permission check ----
+            boolean fine = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED;
+            boolean coarse = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED;
+
+            if (!fine && !coarse) {
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                        REQ_LOCATION
+                );
                 return;
             }
-            LocationServices.getFusedLocationProviderClient(AddDCRActivity.this)
-                    .requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+
+            final FusedLocationProviderClient fused =
+                    LocationServices.getFusedLocationProviderClient(this);
+
+            // ---- Build requests without try/catch re-assignment ----
+            final boolean hasBuilder; // play-services-location 21+?
+            boolean hasBuilder1;
+            try {
+                Class.forName("com.google.android.gms.location.LocationRequest$Builder");
+                hasBuilder1 = true;
+            } catch (Throwable t) {
+                hasBuilder1 = false;
+            }
+
+            hasBuilder = hasBuilder1;
+            final LocationRequest oneShotReq;
+            final LocationRequest longReq;
+
+            if (hasBuilder) {
+                // ✅ New API
+                oneShotReq = new LocationRequest.Builder(10_000L) // 10s window
+                        .setMinUpdateIntervalMillis(5_000L)
+                        .setMaxUpdates(1)
+                        .setWaitForAccurateLocation(true)
+                        .setPriority(com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY)
+                        .build();
+
+                longReq = new LocationRequest.Builder(300_000L)   // 5 min
+                        .setMinUpdateIntervalMillis(180_000L)      // 3 min fastest
+                        .setMinUpdateDistanceMeters(10.2f)
+                        .setPriority(com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY)
+                        .build();
+            } else {
+                // ✅ Legacy API
+                LocationRequest r1 = LocationRequest.create();
+                r1.setInterval(10_000L);
+                r1.setFastestInterval(5_000L);
+                r1.setNumUpdates(1);
+                r1.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                oneShotReq = r1;
+
+                LocationRequest r2 = LocationRequest.create();
+                r2.setInterval(300_000L);
+                r2.setFastestInterval(180_000L);
+                r2.setSmallestDisplacement(10.2f);
+                r2.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                longReq = r2;
+            }
+
+            // ---- STEP 1: Try last known (instant) ----
+            fused.getLastLocation()
+                    .addOnSuccessListener(loc -> {
+                        boolean usedLast = false;
+                        if (loc != null) {
+                            long ageMs = Math.abs(System.currentTimeMillis() - loc.getTime()); // fresh?
+                            if (ageMs <= 2 * 60 * 1000) { // <= 2 min
+                                double latitude = loc.getLatitude();
+                                double longitude = loc.getLongitude();
+
+                                try { setStreetAddress = getCompleteAddressString(latitude, longitude); } catch (Exception ignored) { }
+                                lat = String.valueOf(latitude);
+                                lon = String.valueOf(longitude);
+                                if (binding != null && binding.latlon != null) {
+                                    binding.latlon.setText(lat + "," + lon);
+                                }
+                                usedLast = true;
+                            }
+                        }
+
+                        // ---- STEP 2: If last not usable, request a fast one-shot fix ----
+                        if (!usedLast) {
+                            try { fused.requestLocationUpdates(oneShotReq, locationCallback, Looper.getMainLooper()); } catch (Exception ignored) { }
+                        }
+
+                        // ---- STEP 3: Start continuous background updates (your existing callback) ----
+                        try { fused.requestLocationUpdates(longReq, locationCallback, Looper.getMainLooper()); } catch (Exception ignored) { }
+                    })
+                    .addOnFailureListener(e -> {
+                        // If last known failed, still try one-shot + continuous
+                        try { fused.requestLocationUpdates(oneShotReq, locationCallback, Looper.getMainLooper()); } catch (Exception ignored) { }
+                        try { fused.requestLocationUpdates(longReq,    locationCallback, Looper.getMainLooper()); } catch (Exception ignored) { }
+                    });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-      /*  try {
-            locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 500, 5, (LocationListener) this);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }*/
     }
+
+
 
     public void showDialog_Gift() {
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(AddDCRActivity.this);
@@ -958,6 +1117,7 @@ public class AddDCRActivity extends AppCompatActivity implements LocationListene
                 dlvm.setDocContact(dvm.getDocContact());
                 dlvm.setDoctorTypeName(dvm.getDoctorTypeName());
                 dlvm.setChemberName(chamberName);
+                dlvm.setType(Constants.WHO);
                 dlvm.setProgramTypeName(dvm.getProgramTypeName());
 
                 aInfo.setDoclist(dlvm);
@@ -1042,10 +1202,11 @@ public class AddDCRActivity extends AppCompatActivity implements LocationListene
             aInfo.setSampleList(aFinalProductList_Sample);
             aInfo.setDoctorBrand(aBrandList);
             aInfo.setAempList(aVisitedList);
+            aInfo.setType(Constants.WHO);
             aInfo.setEntryDate_Apps(binding.dcrdate.getText().toString().trim());
 
             if (lat == null && lon == null) {
-                SnackBarManagement._warning_CustomMessage(binding.masterLayoutId, "Your Location Getting Null.Try Again");
+                SnackBarManagement._warning_CustomMessage(binding.masterLayoutId, "Your Location Not Getting.Try Again");
                 return;
             } else {
                 aInfo.setLatitude(lat);
@@ -1110,7 +1271,7 @@ public class AddDCRActivity extends AppCompatActivity implements LocationListene
 
                 }).setCancelable(false).show();*/
 
-        if (message.equals("DCR Successfully Submitted")) {
+        if (message.equals("Successfully Submitted")) {
             new AlertDialog.Builder(AddDCRActivity.this)
                     .setTitle("Success")
                     .setMessage(message)
@@ -1125,6 +1286,21 @@ public class AddDCRActivity extends AppCompatActivity implements LocationListene
                                     startActivity(i);
                                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);*/
                                     finish();
+                                    break;
+
+                                    case "ccrAdapter":
+                                    Intent i = new Intent(AddDCRActivity.this, TodaysTaskActivity.class);
+                                   // i.addFlags(i.FLAG_ACTIVITY_CLEAR_TOP | i.FLAG_ACTIVITY_CLEAR_TASK | i.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(i);
+                                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                    //finish();
+                                    break;
+                                    case "ToDayDoclitAdapter":
+                                    Intent i2 = new Intent(AddDCRActivity.this, TodaysTaskActivity.class);
+                                   // i.addFlags(i.FLAG_ACTIVITY_CLEAR_TOP | i.FLAG_ACTIVITY_CLEAR_TASK | i.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(i2);
+                                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                    //finish();
                                     break;
                                 case "PendingDcrAdapter":
                                     try {

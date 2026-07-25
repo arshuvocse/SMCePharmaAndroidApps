@@ -116,7 +116,7 @@ public class NoticeViewActivity extends AppCompatActivity implements INotice.Vie
     }
 
     private void viewLoad(int noticeId) {
-        String urlBuilder = "http://13.76.141.111:456//NoticeBoard_UI/NoticeDetailsApp.aspx?MID="+noticeId;
+        String urlBuilder = "http://103.244.247.179:181/NoticeBoard_UI/NoticeDetailsApp.aspx?MID="+noticeId;
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         progressBar = ProgressDialog.show(NoticeViewActivity.this, "Loading", "Please wait...");
 

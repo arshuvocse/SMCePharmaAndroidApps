@@ -2,8 +2,8 @@ package com.creatrix.salessolution.DBInfo;
 
 public class DatabaseInfomation {
 
-    private  static  final  String DATABASE_NAME = "SalesLocalDB.db";
-    private static  final  int DATABASE_VERSION= 5;
+    private  static  final  String DATABASE_NAME = "SalesLocalDBoct.db";
+    private static  final  int DATABASE_VERSION= 7;
 
     public static String getDatabaseName() {
         return DATABASE_NAME;

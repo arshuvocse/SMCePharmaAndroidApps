@@ -398,20 +398,50 @@ public class DBCrudHelper {
     }
 
     //TODO:Customer Info
+
+    public void updateCustomerBspCode_SQLite(int customerMasterId, String bspCode) {
+        try {
+            SQLiteDatabase database = dbHelperMain.getWritableDatabase();
+
+            String updateQuery = "UPDATE tblCustomerInfo " +
+                    "SET CustomerBsPCode = ? " +
+                    "WHERE CustomerMasterId = ?";
+
+            database.execSQL(updateQuery, new Object[]{bspCode, customerMasterId});
+
+        } catch (Exception exception) {
+            Log.e("DBEX", exception.toString());
+        }
+    }
+
     public void InsertCustomerInfo_SQLite(List<Customer> mList) {
         try {
             String tableName = "tblCustomerInfo";
             _deleteAllRecordsFromaTable(tableName);
 
             SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < mList.size(); i++) {
-                Customer aInfo = mList.get(i);
-                String insertQuery = "Insert into tblCustomerInfo(CustomerMasterId,CustomerName,CustomerCode,CustomerAdress,CustomerType," +
-                        "CustomerCell,CustomerBalance,CustomerCreditlimit,Market) " +
-                        "values('" + aInfo.getCustomerMasterId() + "','" + aInfo.getCustomerName() + "','" + aInfo.getCustomerCode() + "','" + aInfo.getAddress() + "'," +
-                        "'" + aInfo.getCustomerType() + "','" + aInfo.getCustomerStation() + "','" + aInfo.getCellNo() + "','" + aInfo.getBalance() + "','" + aInfo.getCreditLimit() + "','" + aInfo.getMarketName() + "')";
+            database.beginTransaction();
+            try {
+                for (int i = 0; i < mList.size(); i++) {
+                    Customer aInfo = mList.get(i);
+                    android.content.ContentValues values = new android.content.ContentValues();
+                    values.put("CustomerMasterId", aInfo.getCustomerMasterId());
+                    values.put("CustomerName", aInfo.getCustomerName());
+                    values.put("CustomerCode", aInfo.getCustomerCode());
+                    values.put("CustomerAdress", aInfo.getAddress());
+                    values.put("CustomerType", aInfo.getCustomerType());
+                    values.put("CustomerCell", aInfo.getCellNo());
+                    values.put("CustomerBalance", aInfo.getBalance());
+                    values.put("CustomerCreditlimit", aInfo.getCreditLimit());
+                    values.put("Market", aInfo.getMarketName());
+                    values.put("CustomerBsPCode", aInfo.getCustomerBsPCode());
+                    values.put("CustomerBsPTag", aInfo.getCustomerBsPTag());
 
-                database.execSQL(insertQuery);
+                    database.insert(tableName, null, values);
+                }
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
             }
         } catch (Exception exception) {
             Log.e("DBEX", exception.toString());
@@ -516,33 +546,59 @@ public class DBCrudHelper {
 
     //TODO:Customer Info
     public boolean InsertCDoctorReport_SQLite(List<DoctorARModel> mList) {
+        SQLiteDatabase database = null;
+        int insertedCount = 0;
+        int failedCount = 0;
         try {
             String tableName = "tblDoctorReport";
             _deleteAllRecordsFromaTable(tableName);
 
-            SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-            for (int i = 0; i < mList.size(); i++) {
-                DoctorARModel aInfo = mList.get(i);
-                String MarketName = "";
-                if (!aInfo.getMarketName().isEmpty()) {
-                    MarketName = aInfo.getMarketName().replace("'", "''");
-                } else {
-                    MarketName = "";
-                }
-                String insertQuery = "Insert into tblDoctorReport(createdAt,DoctorCode,MarketName,ActionStatus,WaitingRole,WatingEmployee,GroupId,RegionId,AreaId,TerritoryId,SubTerritoryId,MarketId,ProgramTypeId,DoctorTypeId,DoctorStatus,SMCTypeId) " +
-                        "values('" + aInfo.getCreatedAt() + "','" + aInfo.getDoctorCode() + "','" + MarketName + "','" + aInfo.getActionStatus() + "'," +
-                        "'" + aInfo.getWaitingRole() + "','" + aInfo.getWatingEmployee() + "','" + aInfo.getGroupId() + "','" + aInfo.getRegionId() + "'" +
-                        ",'" + aInfo.getAreaId() + "','" + aInfo.getTerritoryId() + "','" + aInfo.getSubTerritoryId() + "','" + aInfo.getMarketId() + "','" + aInfo.getProgramTypeId() + "','" + aInfo.getDoctorTypeId() + "','" + aInfo.getStatus() + "','" + aInfo.getSMCTypeId() + "')";
+            database = dbHelperMain.getWritableDatabase();
+            database.beginTransaction(); // START TRANSACTION
 
-                database.execSQL(insertQuery);
+            for (DoctorARModel aInfo : mList) {
+                try {
+                    ContentValues values = new ContentValues();
+                    values.put("createdAt", aInfo.getCreatedAt());
+                    values.put("DoctorCode", aInfo.getDoctorCode());
+                    values.put("MarketName", aInfo.getMarketName());
+                    values.put("ActionStatus", aInfo.getActionStatus());
+                    values.put("WaitingRole", aInfo.getWaitingRole());
+                    values.put("WatingEmployee", aInfo.getWatingEmployee());
+                    values.put("GroupId", aInfo.getGroupId());
+                    values.put("RegionId", aInfo.getRegionId());
+                    values.put("AreaId", aInfo.getAreaId());
+                    values.put("TerritoryId", aInfo.getTerritoryId());
+                    values.put("SubTerritoryId", aInfo.getSubTerritoryId());
+                    values.put("MarketId", aInfo.getMarketId());
+                    values.put("ProgramTypeId", aInfo.getProgramTypeId());
+                    values.put("DoctorTypeId", aInfo.getDoctorTypeId());
+                    values.put("DoctorStatus", aInfo.getStatus());
+                    values.put("SMCTypeId", aInfo.getSMCTypeId());
+
+                    database.insert("tblDoctorReport", null, values);
+                    insertedCount++;
+                } catch (Exception e) {
+                    Log.e("InsertError", "Skipping a record due to: " + e.getMessage());
+                    // Optionally: track skipped records
+                    failedCount++;
+                }
             }
+            Log.e("DBEX", String.valueOf(failedCount));
+            Log.e("DBEX", String.valueOf(insertedCount));
+            database.setTransactionSuccessful(); // COMMIT
 
         } catch (Exception exception) {
             Log.e("DBEX", exception.toString());
-            System.out.println(exception.getMessage().toString());
+        } finally {
+            if (database != null) {
+                database.endTransaction(); // END TRANSACTION
+            }
         }
+
         return true;
     }
+
 
     /* public void InsertProductInfo_SQLite(List<Product> mList) {
          try {
@@ -908,9 +964,9 @@ public class DBCrudHelper {
 
             }
 
-            String insertpQuery = "Insert into tblDcrInfo(DoctorId,DoctorName,DocContact,DoctorTypeName,ChemberName,ProgramTypeName,SessionUser,DcrDate,EntryTime,VisitTypeId,VisitTypeName,ChemberId,Remarks) " +
+            String insertpQuery = "Insert into tblDcrInfo(DoctorId, CCType,DoctorName,DocContact,DoctorTypeName,ChemberName,ProgramTypeName,SessionUser,DcrDate,EntryTime,VisitTypeId,VisitTypeName,ChemberId,Remarks) " +
                     //"values('" + aPres.getDoctorId() + "','" + aPres.getDoctorName() + "','" + aPres.getDoclist().getDocContact() + "','" + aPres.getDoclist().getDoctorTypeName() + "','" + aPres.getDoclist().getChemberName() + "','" + aPres.getDoclist().getProgramTypeName() + "','" + aPres.getSessionUser() + "','" + aPres.getDcrDate() + "','" + aPres.getEntryTime() + "','" + aPres.getVisitTypeId() + "','" + aPres.getVisitTypeName() + "','" + aPres.getChamberId() + "','" +  ncomment +"')";
-                    "values('" + aPres.getDoctorId() + "','" + aPres.getDoctorName() + "','" + aPres.getDoclist().getDocContact() + "','" + aPres.getDoclist().getDoctorTypeName() + "','" + ChemberName + "','" + ProgramTypeName + "','" + aPres.getSessionUser() + "','" + aPres.getDcrDate() + "','" + aPres.getEntryTime() + "','" + aPres.getVisitTypeId() + "','" + VisitTypeName + "','" + aPres.getChamberId() + "', '" + Remarks + "')";
+                    "values('" + aPres.getDoctorId() + "','" + aPres.getType() + "','"  + aPres.getDoctorName() + "','" + aPres.getDoclist().getDocContact() + "','" + aPres.getDoclist().getDoctorTypeName() + "','" + ChemberName + "','" + ProgramTypeName + "','" + aPres.getSessionUser() + "','" + aPres.getDcrDate() + "','" + aPres.getEntryTime() + "','" + aPres.getVisitTypeId() + "','" + VisitTypeName + "','" + aPres.getChamberId() + "', '" + Remarks + "')";
             database.execSQL(insertpQuery);
 
             Cursor c1 = database.rawQuery("SELECT * FROM tblDcrInfo where DcrId order by  DcrId desc LIMIT 1", null);
@@ -1253,6 +1309,43 @@ public class DBCrudHelper {
                     aInfo.setMarketName(cursor.getString(cursor.getColumnIndex("Market")));
                     aInfo.setMarketCode(cursor.getString(cursor.getColumnIndex("MarketCode")));
                     aInfo.setCustomerCheck(cursor.getInt(cursor.getColumnIndex("CustomerCheck")));
+                    aInfo.setCustomerBsPCode(cursor.getString(cursor.getColumnIndex("CustomerBsPCode")));
+                    orderList.add(aInfo);
+                }
+            }
+            cursor.close();
+        } catch (Exception exception) {
+            Log.e("Customer", exception.toString());
+            exception.printStackTrace();
+        }
+        return orderList;
+    }
+
+    @SuppressLint("Range")
+    public ArrayList<Customer> getCustomerList_SQLiteBSP() {
+        ArrayList<Customer> orderList = new ArrayList<>();
+        SQLiteDatabase database = dbHelperMain.getWritableDatabase();
+        String oderMasterQuery =
+                "SELECT * FROM tblCustomerInfo " +
+                        "WHERE CustomerBsPTag IS NULL OR CustomerBsPTag = ''";
+        try {
+            Cursor cursor;
+            cursor = database.rawQuery(oderMasterQuery, null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    Customer aInfo = new Customer();
+                    aInfo.setCustomerMasterId(cursor.getInt(cursor.getColumnIndex("CustomerMasterId")));
+                    aInfo.setCustomerName(cursor.getString(cursor.getColumnIndex("CustomerName")));
+                    aInfo.setCustomerCode(cursor.getString(cursor.getColumnIndex("CustomerCode")));
+                    aInfo.setAddress(cursor.getString(cursor.getColumnIndex("CustomerAdress")));
+                    aInfo.setCustomerType(cursor.getString(cursor.getColumnIndex("CustomerType")));
+                    aInfo.setCellNo(cursor.getString(cursor.getColumnIndex("CustomerCell")));
+                    aInfo.setBalance(cursor.getString(cursor.getColumnIndex("CustomerBalance")));
+                    aInfo.setCreditLimit(cursor.getString(cursor.getColumnIndex("CustomerCreditlimit")));
+                    aInfo.setMarketName(cursor.getString(cursor.getColumnIndex("Market")));
+                    aInfo.setMarketCode(cursor.getString(cursor.getColumnIndex("MarketCode")));
+                    aInfo.setCustomerCheck(cursor.getInt(cursor.getColumnIndex("CustomerCheck")));
+                    aInfo.setCustomerBsPCode(cursor.getString(cursor.getColumnIndex("CustomerBsPCode")));
                     orderList.add(aInfo);
                 }
             }
@@ -2360,11 +2453,18 @@ public class DBCrudHelper {
         return groupId;
     }
 
-    @SuppressLint("Range")
-    public int getCurrentUserRegionId_SQLite() {
 
+
+    @SuppressLint("Range")
+    public int getCurrentUserRegionId_SQLite(String empid) {
+        String oderMasterQuery;
         SQLiteDatabase database = dbHelperMain.getWritableDatabase();
-        String oderMasterQuery = "Select * from tblRegion";
+        if ("683".equals(empid)) {
+            oderMasterQuery = "SELECT DISTINCT RegionId FROM tblRegion WHERE RegionId = 5";
+        } else {
+            oderMasterQuery = "SELECT DISTINCT RegionId FROM tblRegion LIMIT 1";
+        }
+
         int regionId = 0;
         try {
             Cursor cursor;
@@ -2384,6 +2484,69 @@ public class DBCrudHelper {
         }
         return regionId;
     }
+
+    @SuppressLint("Range")
+    public int getCurrentUserRegionId_SQLite() {
+        String oderMasterQuery;
+        SQLiteDatabase database = dbHelperMain.getWritableDatabase();
+
+            oderMasterQuery = "SELECT DISTINCT RegionId FROM tblRegion LIMIT 1";
+
+
+        int regionId = 0;
+        try {
+            Cursor cursor;
+            cursor = database.rawQuery(oderMasterQuery, null);
+
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+
+
+                    regionId = cursor.getInt(cursor.getColumnIndex("RegionId"));
+                }
+            }
+            cursor.close();
+        } catch (Exception exception) {
+            Log.e("LOginProfile", exception.toString());
+            exception.printStackTrace();
+        }
+        return regionId;
+    }
+    @SuppressLint("Range")
+    public String getCurrentUserRegionIds_SQLite(String empid) {
+
+        SQLiteDatabase database = dbHelperMain.getReadableDatabase();
+
+        String regionQuery;
+        if ("683".equals(empid)) {
+            regionQuery = "SELECT DISTINCT RegionId FROM tblRegion WHERE RegionId = 5";
+        } else {
+            regionQuery = "SELECT DISTINCT RegionId FROM tblRegion LIMIT 1";
+        }
+
+        ArrayList<String> regionIds = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            cursor = database.rawQuery(regionQuery, null);
+
+            while (cursor.moveToNext()) {
+                regionIds.add(
+                        cursor.getString(cursor.getColumnIndexOrThrow("RegionId"))
+                );
+            }
+
+        } catch (Exception e) {
+            Log.e("LoginProfile", e.toString(), e);
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+
+        return regionIds.isEmpty() ? "0" : TextUtils.join(",", regionIds);
+    }
+
+
+
 
     @SuppressLint("Range")
     public int getCurrentUserAreaId_SQLite() {

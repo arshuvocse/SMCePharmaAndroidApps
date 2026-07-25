@@ -14,6 +14,7 @@ import com.creatrix.salessolution.Activity.Doctor.DCR.NonEffectiveReason;
 import com.creatrix.salessolution.Activity.Doctor.Pending.DoctorARModel;
 import com.creatrix.salessolution.Activity.Doctor.VisitPlan.Model.VisitPlanMaster;
 import com.creatrix.salessolution.Activity.Doctor.VisitPlan.Model.VisitplanModel;
+import com.creatrix.salessolution.Model.DcpCcpData;
 import com.creatrix.salessolution.Model.DcrSM;
 import com.creatrix.salessolution.Model.DcrVM;
 import com.creatrix.salessolution.Model.Doctor.Brand;
@@ -103,6 +104,7 @@ public interface ApiDoctorCall {
     //Approve reject
     @GET("/api/Reports/GetDoctorPendingRejectS")
     Call<List<DoctorARModel>> GetDoctorApproveRejLists(@Query("empId") int empId);
+
 
 
     @GET("/api/Doctor/GetPrescriptionType")
@@ -202,6 +204,8 @@ public interface ApiDoctorCall {
     //TodayTask
     @GET("/api/Doctor/TodaysTask")
     Call<List<TourDetailForTADA>> GetTodayTask(@Query("empId") int empId);
+    @GET("/api/Doctor/GetTodaysTaskDCPCCP")
+    Call<List<DcpCcpData>> GetTodaysTaskDCPCCP(@Query("empId") int empId);
 
     //Approval
     @GET("/api/Doctor/GetDoctor_Applog")
