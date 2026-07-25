@@ -220,6 +220,10 @@ public class CustomerUpdateActivity extends AppCompatActivity implements Locatio
         viewBinding.btnUpdate.setOnClickListener(v -> {
 
             PersonChoiceAdapter adapter = (PersonChoiceAdapter) viewBinding.lvPeople.getAdapter();
+            if (adapter == null) {
+                SnackBarManagement._warning_CustomMessage(viewBinding.masterLayoutId, "Select Code!");
+                return;
+            }
             PersonInfoDAO selected = adapter.getSelectedPerson(); // নিজের getter দিয়ে selected পাবেন
             String bspCode="";
             if (selected != null) {

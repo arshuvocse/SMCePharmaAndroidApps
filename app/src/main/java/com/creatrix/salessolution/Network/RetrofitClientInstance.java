@@ -26,9 +26,11 @@ public class RetrofitClientInstance {
             // 🟡 2. Attach it to the OkHttpClient
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(logging)
-                    .connectTimeout(20, TimeUnit.SECONDS)
-                    .readTimeout(20, TimeUnit.SECONDS)
-                    .writeTimeout(20, TimeUnit.SECONDS)
+                    .connectTimeout(15, TimeUnit.SECONDS)
+                    .readTimeout(15, TimeUnit.SECONDS)
+                    .writeTimeout(15, TimeUnit.SECONDS)
+                    .connectionPool(new okhttp3.ConnectionPool(5, 5, TimeUnit.MINUTES))
+                    .retryOnConnectionFailure(true)
                     .build();
 
             // 🟡 3. Build the Retrofit instance with the client

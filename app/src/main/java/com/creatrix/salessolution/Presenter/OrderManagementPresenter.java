@@ -305,22 +305,25 @@ public class OrderManagementPresenter implements IOrderManagement.Presenter {
                 @Override
                 public void onResponse(Call<ResultInfo> call, Response<ResultInfo> response) {
                     try {
-                        ResultInfo info = response.body();
-                        Log.e("Error", response.body().toString());
-                        String st = "false";
-                        if (info.getSuccess() == true) {
-                            progressDoalog.dismiss();
-                            view.onOrderSuccess("This Order has been Submitted Successfully",Who);
-                        }else {
-                            progressDoalog.dismiss();
-                           // view.onOrderError("Something went wrong... Please try again");
-                            view.onOrderError(info.getErrormessagenew());
+                        ResultInfo info = response != null ? response.body() : null;
+                        if (info != null && info.getSuccess() == true) {
+                            if (progressDoalog != null && progressDoalog.isShowing()) {
+                                progressDoalog.dismiss();
+                            }
+                            view.onOrderSuccess("This Order has been Submitted Successfully", Who);
+                        } else {
+                            if (progressDoalog != null && progressDoalog.isShowing()) {
+                                progressDoalog.dismiss();
+                            }
+                            String msg = (info != null && info.getErrormessagenew() != null) ? info.getErrormessagenew() : "Order submission failed. Please try again.";
+                            view.onOrderError(msg);
                         }
                     } catch (Exception exception) {
-                        progressDoalog.dismiss();
+                        if (progressDoalog != null && progressDoalog.isShowing()) {
+                            progressDoalog.dismiss();
+                        }
                         view.onOrderError("Something went wrong... Please try again");
                     }
-
                 }
 
                 @Override

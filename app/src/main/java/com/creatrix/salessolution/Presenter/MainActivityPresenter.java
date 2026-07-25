@@ -48,23 +48,23 @@ public class MainActivityPresenter implements LoginInterface.Presenter {
             call.enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                    User user =response.body();
-                    if(user == null ){
+                    if (progressDoalog != null && progressDoalog.isShowing()) {
                         progressDoalog.dismiss();
-                        loginView.OnError("User Not Found...Please try again or contact with Admin Department!");
                     }
-                    else if(user.getUserId() == 0){
-                        progressDoalog.dismiss();
-
-                        if(!user.getTwoDeviceMsg().equals("")){
+                    if (!response.isSuccessful()) {
+                        loginView.OnError("Server connection error (" + response.code() + "). Please try again.");
+                        return;
+                    }
+                    User user = response.body();
+                    if (user == null) {
+                        loginView.OnError("User Not Found...Please try again or contact Admin!");
+                    } else if (user.getUserId() == 0) {
+                        if (user.getTwoDeviceMsg() != null && !user.getTwoDeviceMsg().equals("")) {
                             loginView.OnError("Maximum Two Device Allowed!!");
+                        } else {
+                            loginView.OnError("Your Login Name and Password do not match");
                         }
-                        else
-                        {
-                            loginView.OnError("You Login Name and Password do not match");
-                        }
-
-                    }else{
+                    } else {
                         int usid = user.getUserId();
                         int EmpInfoId = user.getEmpInfoId();
                         String userName = user.getUserName();

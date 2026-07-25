@@ -1148,11 +1148,12 @@ public class OrderMainActivity extends AppCompatActivity implements LocationList
                 @Override
                 public void onResponse(@NonNull Call<List<CampaignModel>> call, @NonNull Response<List<CampaignModel>> response) {
                     progressDoalog.dismiss();
-                    if (response != null) {
+                    if (response != null && response.isSuccessful() && response.body() != null) {
                         isSetCampaignAdd = true;
-                        cmpaignList = new ArrayList<>();
                         cmpaignList = response.body();
                         SetCampaignShow(cmpaignList);
+                    } else {
+                        SnackBarManagement._warning_CustomMessage(viewBinding.masterLayoutId, "No Campaign found for selected product");
                     }
                 }
 
@@ -1160,25 +1161,23 @@ public class OrderMainActivity extends AppCompatActivity implements LocationList
                 public void onFailure(@NonNull Call<List<CampaignModel>> call, @NonNull Throwable t) {
                     progressDoalog.dismiss();
                     if (t instanceof SocketTimeoutException) {
-
-                        ToastManagment.GetLongToast(OrderMainActivity.this, "Time out. Please try again");
+                        ToastManagment.GetLongToast(OrderMainActivity.this, "Connection Timeout. Please check network and try again");
                     } else {
-                        ToastManagment.GetLongToast(OrderMainActivity.this, "Time out. Please try again");
-
+                        ToastManagment.GetLongToast(OrderMainActivity.this, "Network Error: " + t.getLocalizedMessage());
                     }
                 }
             });
 
         } catch (Exception ex) {
             progressDoalog.dismiss();
-            ToastManagment.GetLongToast(OrderMainActivity.this, "Some thing went wrong. Please try again");
+            ToastManagment.GetLongToast(OrderMainActivity.this, "Something went wrong. Please try again");
             ex.printStackTrace();
         }
 
     }
     //TODO:Herer Campaign Show into POPUP
     private void SetCampaignShow(List<CampaignModel> cmpaignList) {
-        if (cmpaignList.size() > 0) {
+        if (cmpaignList != null && cmpaignList.size() > 0) {
             // CampaignPopAdapter adapter;
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
             LayoutInflater inflater = this.getLayoutInflater();

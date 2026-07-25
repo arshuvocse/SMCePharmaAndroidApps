@@ -56,7 +56,7 @@ public class SampleOrderActivity extends AppCompatActivity implements RecyclerVi
     IOrderManagement.Presenter orderPresenter;
     SessionManagement session;
     View aMasterlayout;
-    private static DecimalFormat df2 = new DecimalFormat("#.##");
+    private static DecimalFormat df2 = new DecimalFormat("#.##", new java.text.DecimalFormatSymbols(java.util.Locale.US));
     String orderTYpe;
 
     //    private ArrayList<Product> productArrayList = new ArrayList<>();

@@ -2,27 +2,35 @@ package com.creatrix.salessolution.Network;
 
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClientInstanceTracking {
     private static final String BASE_URL = "http://103.244.247.179:202";
-//    private static final String BASE_URL = "http://103.198.137.179:983";
     private static Retrofit retrofit = null;
-    /*   OkHttpClient client= new OkHttpClient()
-               .writeTimeoutMillis(TimeUnit.MINUTES)*/
-    public static Retrofit getRetrofitInstance() {
-        OkHttpClient clientz =new OkHttpClient.Builder()
-                .connectTimeout(10,TimeUnit.MINUTES)
-                .writeTimeout(10,TimeUnit.MINUTES)
-                .readTimeout(10,TimeUnit.MINUTES)
-                .build();
+    private static OkHttpClient client = null;
+
+    private static synchronized OkHttpClient getOkHttpClient() {
+        if (client == null) {
+            client = new OkHttpClient.Builder()
+                    .connectTimeout(15, TimeUnit.SECONDS)
+                    .writeTimeout(15, TimeUnit.SECONDS)
+                    .readTimeout(15, TimeUnit.SECONDS)
+                    .connectionPool(new ConnectionPool(5, 5, TimeUnit.MINUTES))
+                    .retryOnConnectionFailure(true)
+                    .build();
+        }
+        return client;
+    }
+
+    public static synchronized Retrofit getRetrofitInstance() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
-                    .client(clientz)
+                    .client(getOkHttpClient())
                     .build();
         }
         return retrofit;

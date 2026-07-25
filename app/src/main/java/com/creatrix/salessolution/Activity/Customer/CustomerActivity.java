@@ -1023,14 +1023,13 @@ else {
             csm.setConPerson(viewBinding.cmistOwnerName.getText().toString());
             csm.setVoterID(viewBinding.cmistNid.getText().toString());
             csm.setTradeLicense(viewBinding.cmistTradeLicense.getText().toString());
-            if (String.valueOf(selectedMarketId) == null || selectedMarketId == 0) {
-                int prevmkId = cal.getCustomerSMListDao().getMarketId();
-                csm.setMarketId(prevmkId);
-            } else {
-                csm.setMarketId(selectedMarketId);
+            int marketIdToSet = selectedMarketId;
+            if (marketIdToSet == 0 && cal != null && cal.getCustomerSMListDao() != null) {
+                marketIdToSet = cal.getCustomerSMListDao().getMarketId();
             }
-            //csm.setMarketId(selectedMarketId);
-            if (lat == null && lon == null) {
+            csm.setMarketId(marketIdToSet);
+
+            if (lat == null || lon == null) {
                 SnackBarManagement._warning_CustomMessage(viewBinding.masterLayoutId, "Your Latitude and Longitude Getting Null.Try Again");
                 return;
             } else {

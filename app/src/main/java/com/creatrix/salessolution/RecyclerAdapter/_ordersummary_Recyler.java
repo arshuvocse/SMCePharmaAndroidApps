@@ -18,19 +18,35 @@ import com.creatrix.salessolution.Model.Product;
 import com.creatrix.salessolution.R;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 
 
 public class _ordersummary_Recyler extends RecyclerView.Adapter<_ordersummary_Recyler.BookViewHolder> {
     private Context context;
    // private List<Product> aProductList;
    List<CampaignCalModel> aProductList;
-    DecimalFormat decimalFormat = new DecimalFormat("##.00");
+    DecimalFormat decimalFormat = new DecimalFormat("##.00", new DecimalFormatSymbols(Locale.US));
+
+    private String formatDouble(double val) {
+        try {
+            return decimalFormat.format(val);
+        } catch (Exception e) {
+            return String.format(Locale.US, "%.2f", val);
+        }
+    }
+
     /*public _ordersummary_Recyler(List<Product> aProductList) {
         this.aProductList = aProductList;
     }*/
     public _ordersummary_Recyler(List<CampaignCalModel> aProductList) {
         this.aProductList = aProductList;
+    }
+
+    public void updateData(List<CampaignCalModel> newList) {
+        this.aProductList = newList;
+        notifyDataSetChanged();
     }
     @Override
     public _ordersummary_Recyler.BookViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -44,14 +60,11 @@ public class _ordersummary_Recyler extends RecyclerView.Adapter<_ordersummary_Re
         holder.productName.setText(aProductList.get(position).getProductName());
         holder.unitPrice.setText(Double.toString(aProductList.get(position).getUnitPrice()));
         holder.quantity.setText(String.valueOf(aProductList.get(position).getQuantity()));
-        //holder.tp.setText(Double.toString(Double.parseDouble(decimalFormat.format(aProductList.get(position).getTp()))));
-        holder.tp.setText(Double.toString(Double.parseDouble(decimalFormat.format(aProductList.get(position).getTotalPrice()))));
-        holder.price.setText(Double.toString(Double.parseDouble(decimalFormat.format(aProductList.get(position).getNetAmount()))));
-        if(String.valueOf(aProductList.get(position).getDiscountValue()) !=null){
-            holder.discountTxt.setText(Double.toString(Double.parseDouble(decimalFormat.format(aProductList.get(position).getDiscountValue()))));
-        }
-        if(String.valueOf(aProductList.get(position).getDiscountPercentage()) !=null){
-            holder.discountprcntTxt.setText(Double.toString(Double.parseDouble(decimalFormat.format(aProductList.get(position).getDiscountPercentage()))));
+        holder.tp.setText(formatDouble(aProductList.get(position).getTotalPrice()));
+        holder.price.setText(formatDouble(aProductList.get(position).getNetAmount()));
+        if(aProductList.get(position) != null){
+            holder.discountTxt.setText(formatDouble(aProductList.get(position).getDiscountValue()));
+            holder.discountprcntTxt.setText(formatDouble(aProductList.get(position).getDiscountPercentage()));
         }
 
     }

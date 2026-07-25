@@ -23,7 +23,9 @@ import com.creatrix.salessolution.Model.ProductSample;
 import com.creatrix.salessolution.R;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 
 public class _product_orderpage_adapter extends RecyclerView.Adapter<_product_orderpage_adapter.BookViewHolder> {
     private Context context;
@@ -38,10 +40,17 @@ public class _product_orderpage_adapter extends RecyclerView.Adapter<_product_or
     TextView totalVAT;
     TextView total;
 
-    DecimalFormat decimalFormat = new DecimalFormat("##.00");
+    DecimalFormat decimalFormat = new DecimalFormat("##.00", new DecimalFormatSymbols(Locale.US));
     private RecyclerViewActionListener mListener;
     String who;
 
+    private String formatDouble(double val) {
+        try {
+            return decimalFormat.format(val);
+        } catch (Exception e) {
+            return String.format(Locale.US, "%.2f", val);
+        }
+    }
 
     public _product_orderpage_adapter(List<OrderDtls> aProductvList, OrderApprovalViewActivity orderAVActivity, String ViewOrder) {
         this.context = context;
@@ -92,10 +101,8 @@ public class _product_orderpage_adapter extends RecyclerView.Adapter<_product_or
                 holder.productName.setText(aProductList.get(position).getProductName());
                 holder.unitPrice.setText(Double.toString(aProductList.get(position).getUnitPrice()));
                 holder.quantity.setText(String.valueOf(aProductList.get(position).getQuantity()));
-                holder.tp.setText(Double.toString(Double.parseDouble(decimalFormat.format(aProductList.get(position).getTp()))));
-               // holder.tp.setText(String.valueOf(aProductList.get(position).getTp()));
-                holder.price.setText(Double.toString(Double.parseDouble(decimalFormat.format(aProductList.get(position).getPrice()))));
-                //holder.price.setText(String.valueOf(aProductList.get(position).getPrice()));
+                holder.tp.setText(formatDouble(aProductList.get(position).getTp()));
+                holder.price.setText(formatDouble(aProductList.get(position).getPrice()));
             }else {
                 Toast.makeText(orderMainActivity, "No Data", Toast.LENGTH_SHORT).show();
             }
@@ -138,8 +145,8 @@ public class _product_orderpage_adapter extends RecyclerView.Adapter<_product_or
                 holder.unitPrice.setText(Double.toString(ps.getTotalTradePrice()));
                 holder.quantity.setText(String.valueOf(ps.getQuantity()));
                 holder.quantity.setEnabled(false);
-                holder.tp.setText(Double.toString(Double.parseDouble(decimalFormat.format(ps.getUnitPrice()))));
-                holder.price.setText(Double.toString(Double.parseDouble(decimalFormat.format(ps.getTotalVatAmount()))));
+                holder.tp.setText(formatDouble(ps.getUnitPrice()));
+                holder.price.setText(formatDouble(ps.getTotalVatAmount()));
             }
             else {
                 Toast.makeText(orderAVActivity, "No Data", Toast.LENGTH_SHORT).show();
